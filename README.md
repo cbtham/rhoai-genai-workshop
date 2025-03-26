@@ -270,5 +270,94 @@ For me this looks like
 
 ### 4.2. Deploy your Model!
 
+Navigate to Models within your Data Science Project and select single-model serving:
+
+***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step***
+
+![Image](img/04/4.3.png)
+
+After selecting single-models serving, select Deploy Model
+
+![Image](img/04/4.4.png)
+
+2. Fill in the following values:
+- ***Model deployment name***: Name of the deployed model
+- ***Serving runtime***: vLLM ServingRuntime for KServe
+- ***Model server size***: You can select whatever size you wish, for this guide I will keep the small size 
+- ***Accelerator***: Select NVIDIA GPU
+- ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
+- ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name
+- ***Source model location***: Select the data connection that you set up in step 4.1. Then provide it the path to your model. If you're follow this guide, the path will be granite-3.0-8b-instruct. If you're unsure of the path you can go to the minio-ui, navigate to the models bucket you create, and see the name of the directory where the model is stored.
+
+![Image](img/04/4.5.png)
+
+![Image](img/04/4.6.png)
+
+Once that is done, you are all set to hit Deploy! It will take some time for the model to be deployed.
+
+### 4.3 Current Issues/Bugs (CURRENTLY REQUIRED STEP)
+
+After deploying your model, after some time the pod for the model may terminate. You have to manually go into the console and spin it back up to 1. After this, the model should not terminate again and it the model pod should succesfully be created. This is a current bug within RHOAI that is caused by large models being deployed. We believe the issue may be caused because the model is of a size that it takes a while to get it in place on the node or into the cluster that it isn't given a proper enough amount of breathing room to actually allow it to start up. This bug is currently in the backlog of things to fix. So for now with bigger models like granite, you will have to manually spin the pod back up.
+
+![Image](img/04/4.7.png)
+
+After some minutes you can see my pod was terminated the deployment scaled to 0. I will just manually scale it back to 1 in the UI, or I can run the following command from the cli:
+
+`oc scale deployment/[deployment_name] --replicas=1 -n [namespace] --as system:admin`
+
+For me this looks like
+
+`oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sandbox --as system:admin`
+
+After this it will take some time for the model pod to spin back up.
+
+### 4.4 Query Model Endpoint
+
+Once your model pod is in a running state, you can try querying it in order to test if the endpoint is reachable and the model is returning correctly
+
+1. Get the URL for the model endpoint, you can get this by selecting internal and external endpoint details from the RHOAI UI within the models tab in your Data Science Project:
+
+![Image](img/04/4.8.png)
+
+2. Get the Authorization Token for your model by selecting the dropdown to the left of your model name. Your Authorization Token is at the bottom under "token authentication" -> "token secret", you can just copy the token directly from the UI
+
+![Image](img/04/4.9.png)
+
+3. Now that you have the URL and Authorization Token, you can try querying the model endpoint. We will try multiple queries.
+
+#### /v1/models
+Let's start with the simplest query, the /v1/models endpoint. This endpoint just returns information about the models being served, I use it to simply see if the model can accept a request and return with some information:
+
+`curl -k -X GET https://url/v1/models \ -H "Authorization: Bearer YOUR_BEARER_TOKEN"`
+
+Running this command should return an output similar to the below output
+
+>{"object":"list","data":[{"id":"demo-granite","object":"model","created":1743010793,"owned_by":"vllm","root":"/mnt/models","parent":null,"max_model_len":4096,"permission":[{"id":"modelperm-09f199065a2846ec8bbfabea78f72349","object":"model_permission","created":1743010793,"allow_create_engine":false,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":false,"allow_view":true,"allow_fine_tuning":false,"organization":"*","group":null,"is_blocking":false}]}]}
+
+#### v1/completions
+
+Now that we know that works, let's test whether the /v1/completions endpoint works. This endpoint takes a text prompt and returns a completed text response. 
+
+`curl -k -X POST https://url/v1/completions \
+    -H "Content-Type: application/json" -H "Authorization: Bearer YOUR_BEARER_TOKEN" \
+    -d '{
+        "model": "demo-granite",
+        "prompt": "San Francisco is a",
+        "max_tokens": 7,
+        "temperature": 0.7
+    }'
+`
+
+Running this command should return an output similar to the following:
+
+> {"id":"cmpl-40be2aa235c94f38a3b6161c6b93b59c","object":"text_completion","created":1743011184,"model":"demo-granite","choices":[{"index":0,"text":" city known for its diverse population","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":4,"total_tokens":11,"completion_tokens":7}}
+
+You can see within "text" the completed response "San Francisco is a... city known for its diverse population"
+
+You can change the ***temperature*** of the query. The temperature essentially controls the "randomness" of the model's response. The lower the temperature the more deterministic the reponse, the higher the temperature the more random/unpredictible the response. So if you set the temperature to 0, it would always return the same output since there would be no randomness. 
+
+### 4.5 Wrapping Up
+
+Congratulations! You have now successfully deployed the Granite Model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
 
 ## 5. Setting up Observability Stack & Collecting Metrics
