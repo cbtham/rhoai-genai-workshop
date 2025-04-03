@@ -20,194 +20,24 @@ The purpose for this guide is to offer the simplest steps for deploying an AI mo
 
 ![Image](img/01/1.1.png)
 
-2. Paste the following YAML in the box, but don't press ok yet!:
+2. Apply the minio setup
+- By default, the size of the storage is 50 GB. (see line 11). Change it if you need to, however it is not necessary to change it for this guide.
+- If you want to, edit lines 21-22 to change the default user/password.
 
 ```
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: minio-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 50Gi
-  volumeMode: Filesystem
----
-kind: Secret
-apiVersion: v1
-metadata:
-  name: minio-secret
-stringData:
-  # change the username and password to your own values.
-  # ensure that the user is at least 3 characters long and the password at least 8
-  minio_root_user: minio
-  minio_root_password: minio123
----
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: minio
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: minio
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        app: minio
-    spec:
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: minio-pvc
-      containers:
-        - resources:
-            limits:
-              cpu: 250m
-              memory: 1Gi
-            requests:
-              cpu: 20m
-              memory: 100Mi
-          readinessProbe:
-            tcpSocket:
-              port: 9000
-            initialDelaySeconds: 5
-            timeoutSeconds: 1
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-          terminationMessagePath: /dev/termination-log
-          name: minio
-          livenessProbe:
-            tcpSocket:
-              port: 9000
-            initialDelaySeconds: 30
-            timeoutSeconds: 1
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-          env:
-            - name: MINIO_ROOT_USER
-              valueFrom:
-                secretKeyRef:
-                  name: minio-secret
-                  key: minio_root_user
-            - name: MINIO_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: minio-secret
-                  key: minio_root_password
-          ports:
-            - containerPort: 9000
-              protocol: TCP
-            - containerPort: 9090
-              protocol: TCP
-          imagePullPolicy: IfNotPresent
-          volumeMounts:
-            - name: data
-              mountPath: /data
-              subPath: minio
-          terminationMessagePolicy: File
-          image: >-
-            quay.io/minio/minio:latest
-          args:
-            - server
-            - /data
-            - --console-address
-            - :9090
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
-      dnsPolicy: ClusterFirst
-      securityContext: {}
-      schedulerName: default-scheduler
-  strategy:
-    type: Recreate
-  revisionHistoryLimit: 10
-  progressDeadlineSeconds: 600
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: minio-service
-spec:
-  ipFamilies:
-    - IPv4
-  ports:
-    - name: api
-      protocol: TCP
-      port: 9000
-      targetPort: 9000
-    - name: ui
-      protocol: TCP
-      port: 9090
-      targetPort: 9090
-  internalTrafficPolicy: Cluster
-  type: ClusterIP
-  ipFamilyPolicy: SingleStack
-  sessionAffinity: None
-  selector:
-    app: minio
----
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: minio-api
-spec:
-  to:
-    kind: Service
-    name: minio-service
-    weight: 100
-  port:
-    targetPort: api
-  wildcardPolicy: None
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
----
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: minio-ui
-spec:
-  to:
-    kind: Service
-    name: minio-service
-    weight: 100
-  port:
-    targetPort: ui
-  wildcardPolicy: None
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
+oc apply -f minio-setup.yaml
 ```
-3. By default, the size of the storage is 50 GB. (see line 11). Change it if you need to, however it is not necessary to change it for this guide.
 
-4. If you want to, edit lines 21-22 to change the default user/password.
 
-5. Press Create.
-
-6. You should see:
-
-![Image](img/01/1.2.png)
-
-7. And there should now be a running minio pod:
+3. Give it a minute, nd there should now be a running minio pod:
 
 ![Image](img/01/1.3.png)
 
-8. As well as two minio routes:
+4. As well as two minio routes:
 - The -api route is for programmatic access to Minio
 - The -ui route is for browser-based access to Minio
 
-
-
 ![Image](img/01/1.4.png)
-
-
 
 ## 2. Downloading Model 
 
@@ -418,7 +248,6 @@ oc apply -f obs/expose-grafana.yaml
 
 ```
 oc get route grafana -n grafana -o jsonpath='https://{.spec.host}{"\n"}'
-
 ```
 
 
