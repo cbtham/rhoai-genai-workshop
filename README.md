@@ -221,11 +221,15 @@ First you need to generate an access token:
 
 Now that you have a token, you can download the model.
 
-`git clone https://<user_name>:<token>@huggingface.co/<repo_path>`
+```
+git clone https://<user_name>:<token>@huggingface.co/<repo_path>
+```
 
 For me this looks like
 
-`git clone https://IsaiahS1:<token>@huggingface.co/ibm-granite/granite-3.0-8b-instruct`
+```
+git clone https://IsaiahS1:<token>@huggingface.co/ibm-granite/granite-3.0-8b-instruct
+```
 
 
 ## 3. Uploading the Model to the S3 Minio Storage
@@ -303,11 +307,15 @@ After deploying your model, after some time the pod for the model may terminate.
 
 After some minutes you can see my pod was terminated the deployment scaled to 0. I will just manually scale it back to 1 in the UI, or I can run the following command from the cli:
 
-`oc scale deployment/[deployment_name] --replicas=1 -n [namespace] --as system:admin`
+```
+oc scale deployment/[deployment_name] --replicas=1 -n [namespace] --as system:admin
+```
 
 For me this looks like
 
-`oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sandbox --as system:admin`
+```
+oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sandbox --as system:admin
+```
 
 After this it will take some time for the model pod to spin back up.
 
@@ -328,7 +336,9 @@ Once your model pod is in a running state, you can try querying it in order to t
 #### /v1/models
 Let's start with the simplest query, the /v1/models endpoint. This endpoint just returns information about the models being served, I use it to simply see if the model can accept a request and return with some information:
 
-`curl -k -X GET https://url/v1/models \ -H "Authorization: Bearer YOUR_BEARER_TOKEN"`
+```
+curl -k -X GET https://url/v1/models \ -H "Authorization: Bearer YOUR_BEARER_TOKEN"
+```
 
 Running this command should return an output similar to the below output
 
@@ -362,42 +372,74 @@ Congratulations! You have now successfully deployed the Granite Model on Red Hat
 
 ## 5. Setting up Observability Stack & Collecting Metrics
 
-### 5.1 Prometheus and Grafana
+### 5.1 Prometheus 
 
-#### 5.2 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
+#### 5.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
 
 Prometheus is installed by default with OpenShift. However, the default monitoring stack only collects metrics related to core OpenShift platform components. Therefore we need to enable User Workload Monitoring in order to collect metrics from the model we have deployed. 
 
 In order to enable monitoring for user-defined projects, we need to set `enableUserWorkload: true` in the cluster monitoring ConfigMap object. You can do this by applying the following yaml:
 
-```oc apply -f obs/cluster-monitoring-config.yaml```
+```
+oc apply -f obs/cluster-monitoring-config.yaml
+```
 
-#### 5.3 Add vLLM metrics to user-workload (uwl) metrics allowlist
+#### 5.1.2 Add vLLM metrics to user-workload (uwl) metrics allowlist
 
 Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want to Prometheus to gather. We can do this be adding `vllm:.*` to the `uwl_metrics_list.yaml` in the project namespace. Before applying the yaml, make sure to change the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, update the `uwl_metrics_list.yaml` to add vLLM metrics:
 
-```oc apply -f obs/metrics_allowlist.yaml```
+```
+oc apply -f obs/metrics_allowlist.yaml
+```
 
-### 5.4 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
+### 5.2 Grafana
+
+#### 5.2.1 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
 
 1. Create Grafana namespace
 
-```oc create namespace grafana```
+```
+oc create namespace grafana
+```
 
 2. Deploy grafana PVC, Service, and Deployment
 
-```oc apply -f obs/grafana-setup.yaml```
+```
+oc apply -f obs/grafana-setup.yaml
+```
 
 3. Apply route to expose Grafana UI externally
 
-```oc apply -f obs/expose-grafana.yaml```
+```
+oc apply -f obs/expose-grafana.yaml
+```
+
+4. Get the Grafana route URL:
+
+```
+oc get route grafana -n grafana -o jsonpath='https://{.spec.host}{"\n"}'
+
+```
 
 
-### 5.5 Adding Data Source to Grafana
+#### 5.2.2 Adding Data Source to Grafana
 
-1. Create Bearer token
+1. Create Grafana Secret Token
 
-```oc create token prometheus-k8s -n openshift-monitoring --as system:admin```
+This is used so that Grafana can access the Prometheus Data Source.
+
+
+```
+oc apply -f obs/grafana-prometheus-token.yaml
+```
+
+Get the token by running the following command:
+
+```
+oc get secret grafana-prometheus-token \
+  -n openshift-monitoring \
+  -o jsonpath='{.data.token}' | base64 -d && echo
+```
 
 2. Add Data Source in Grafana UI
 
@@ -429,7 +471,7 @@ Go to explore->metrics explorer and then for the metric value type vllm, verify 
 ![Image](img/05/5.5.png)
 
 
-### 5.6 Importing vLLM Dashboard
+### 5.3 Importing vLLM Dashboard
 
 The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
 
@@ -444,7 +486,7 @@ Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://
 Then hit load, then Import.
 
 
-### 5.7 Importing DCGM Dashboard
+### 5.4 Importing DCGM Dashboard
 
 The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/. 
 
