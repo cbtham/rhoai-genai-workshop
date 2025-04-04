@@ -232,13 +232,13 @@ oc create namespace grafana
 2. Deploy grafana PVC, Service, and Deployment
 
 ```
-oc apply -f obs/grafana-setup.yaml
+oc apply -f obs/grafana-setup.yaml -n grafana
 ```
 
 3. Apply route to expose Grafana UI externally
 
 ```
-oc apply -f obs/expose-grafana.yaml
+oc apply -f obs/expose-grafana.yaml -n grafana
 ```
 
 4. Get the Grafana route URL:
