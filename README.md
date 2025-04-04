@@ -16,7 +16,6 @@ The purpose for this guide is to offer the simplest steps for deploying an AI mo
 
 ### 1.2 Deploying Minio in Project Namespace
 
-
 1. Apply the minio setup
 - By default, the size of the storage is 50 GB. (see line 11). Change it if you need to, however it is not necessary to change it for this guide.
 - If you want to, edit lines 21-22 to change the default user/password.
@@ -175,15 +174,16 @@ Running this command should return an output similar to the below output
 
 Now that we know that works, let's test whether the /v1/completions endpoint works. This endpoint takes a text prompt and returns a completed text response. 
 
-`curl -k -X POST https://url/v1/completions \
+```
+curl -k -X POST https://url/v1/completions \
     -H "Content-Type: application/json" -H "Authorization: Bearer YOUR_BEARER_TOKEN" \
     -d '{
-        "model": "demo-granite",
+        "model": "MODEL_NAME",
         "prompt": "San Francisco is a",
         "max_tokens": 7,
         "temperature": 0.7
     }'
-`
+```
 
 Running this command should return an output similar to the following:
 
