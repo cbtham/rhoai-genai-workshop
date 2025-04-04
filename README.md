@@ -163,7 +163,7 @@ Once your model pod is in a running state, you can try querying it in order to t
 Let's start with the simplest query, the /v1/models endpoint. This endpoint just returns information about the models being served, I use it to simply see if the model can accept a request and return with some information:
 
 ```
-curl -k -X GET https://url/v1/models \ -H "Authorization: Bearer YOUR_BEARER_TOKEN"
+curl -k -X GET https://url/v1/models -H "Authorization: Bearer YOUR_BEARER_TOKEN"
 ```
 
 Running this command should return an output similar to the below output
