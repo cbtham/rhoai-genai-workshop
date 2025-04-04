@@ -256,7 +256,7 @@ This is used so that Grafana can access the Prometheus Data Source.
 
 
 ```
-oc apply -f obs/grafana-prometheus-token.yaml
+oc apply -f obs/grafana-prometheus-token.yaml -n grafana
 ```
 
 Get the token by running the following command:
