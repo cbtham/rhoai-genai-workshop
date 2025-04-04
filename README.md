@@ -16,11 +16,8 @@ The purpose for this guide is to offer the simplest steps for deploying an AI mo
 
 ### 1.2 Deploying Minio in Project Namespace
 
-1. Within your namespace in the OpenShift console, click on the + ("Import YAML") button:
 
-![Image](img/01/1.1.png)
-
-2. Apply the minio setup
+1. Apply the minio setup
 - By default, the size of the storage is 50 GB. (see line 11). Change it if you need to, however it is not necessary to change it for this guide.
 - If you want to, edit lines 21-22 to change the default user/password.
 
@@ -29,11 +26,11 @@ oc apply -f minio-setup.yaml
 ```
 
 
-3. Give it a minute, nd there should now be a running minio pod:
+2. Give it a minute, nd there should now be a running minio pod:
 
 ![Image](img/01/1.3.png)
 
-4. As well as two minio routes:
+3. As well as two minio routes:
 - The -api route is for programmatic access to Minio
 - The -ui route is for browser-based access to Minio
 
