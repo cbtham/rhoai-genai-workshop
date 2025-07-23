@@ -125,27 +125,7 @@ After selecting single-models serving, select Deploy Model
 
 Once that is done, you are all set to hit Deploy! It will take some time for the model to be deployed.
 
-### 4.3 Current Issues/Bugs (CURRENTLY REQUIRED STEP)
-
-After deploying your model, after some time the pod for the model may terminate. You have to manually go into the console and spin it back up to 1. After this, the model should not terminate again and it the model pod should succesfully be created. This is a current bug within RHOAI that is caused by large models being deployed. We believe the issue may be caused because the model is of a size that it takes a while to get it in place on the node or into the cluster that it isn't given a proper enough amount of breathing room to actually allow it to start up. This bug is currently in the backlog of things to fix. So for now with bigger models like granite, you will have to manually spin the pod back up.
-
-![Image](img/04/4.7.png)
-
-After some minutes you can see my pod was terminated the deployment scaled to 0. I will just manually scale it back to 1 in the UI, or I can run the following command from the cli:
-
-```
-oc scale deployment/[deployment_name] --replicas=1 -n [namespace] --as system:admin
-```
-
-For me this looks like
-
-```
-oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sandbox --as system:admin
-```
-
-After this it will take some time for the model pod to spin back up.
-
-### 4.4 Query Model Endpoint
+### 4.3 Query Model Endpoint
 
 Once your model pod is in a running state, you can try querying it in order to test if the endpoint is reachable and the model is returning correctly
 
@@ -193,35 +173,42 @@ You can see within "text" the completed response "San Francisco is a... city kno
 
 You can change the ***temperature*** of the query. The temperature essentially controls the "randomness" of the model's response. The lower the temperature the more deterministic the reponse, the higher the temperature the more random/unpredictible the response. So if you set the temperature to 0, it would always return the same output since there would be no randomness. 
 
-### 4.5 Wrapping Up
+### 4.4 Wrapping Up
 
-Congratulations! You have now successfully deployed the Granite Model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
+Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
 
-## 5. Setting up Observability Stack & Collecting Metrics
+## 5. Deploy a custom workbench to interact with the LLM
 
-### 5.1 Prometheus 
+### 5.1 AnythingLLM
+#![Image](img/05/5.1png)
+### 5.2 Retrieval Augmented Generation with AnythingLLM 
+#![Image](img/05/5.1png)
 
-#### 5.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
+## 6. Setting up Observability Stack & Collecting Metrics
+
+### 6.1 Prometheus 
+
+#### 6.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
 
 Prometheus is installed by default with OpenShift. However, the default monitoring stack only collects metrics related to core OpenShift platform components. Therefore we need to enable User Workload Monitoring in order to collect metrics from the model we have deployed. 
 
 In order to enable monitoring for user-defined projects, we need to set `enableUserWorkload: true` in the cluster monitoring ConfigMap object. You can do this by applying the following yaml:
 
 ```
-oc apply -f obs/cluster-monitoring-config.yaml
+oc apply -f obs/cluster-monitoring-config.yaml -n openshift-monitoring
 ```
 
-#### 5.1.2 Add vLLM metrics to user-workload (uwl) metrics allowlist
+#### 6.1.2 Add vLLM metrics to user-workload (uwl) metrics allowlist
 
-Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want to Prometheus to gather. We can do this be adding `vllm:.*` to the `uwl_metrics_list.yaml` in the project namespace. Before applying the yaml, make sure to change the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, update the `uwl_metrics_list.yaml` to add vLLM metrics:
+Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want to Prometheus to gather. We can do this be adding `vllm:.*` to the `metrics_allowlist.yaml` in the project namespace. Before applying the yaml, make sure to **CHANGE** the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, deploy with the following command.
 
 ```
 oc apply -f obs/metrics_allowlist.yaml
 ```
 
-### 5.2 Grafana
+### 6.2 Grafana
 
-#### 5.2.1 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
+#### 6.2.1 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
 
 1. Create Grafana namespace
 
@@ -248,7 +235,7 @@ oc get route grafana -n grafana -o jsonpath='https://{.spec.host}{"\n"}'
 ```
 
 
-#### 5.2.2 Adding Data Source to Grafana
+#### 6.2.2 Adding Data Source to Grafana
 
 1. Create Grafana Secret Token
 
@@ -282,6 +269,10 @@ Select Prometheus as the data source, then fill in the following values:
     - Header: Authorization
     - Value: Bearer [Token created in step 5.5]
 
+  > Prometheus server url is the same for everyone
+  
+  > The Value should include "Bearer\<SPACE\>YOUR_TOKEN"
+
 Once the above is filled out, hit save and test at the bottom. You should then see the following:
 
 ![Image](img/05/5.3.png)
@@ -297,7 +288,7 @@ Go to explore->metrics explorer and then for the metric value type vllm, verify 
 ![Image](img/05/5.5.png)
 
 
-### 5.3 Importing vLLM Dashboard
+### 6.3 Importing vLLM Dashboard
 
 The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
 
@@ -312,7 +303,7 @@ Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://
 Then hit load, then Import.
 
 
-### 5.4 Importing DCGM Dashboard
+### 6.4 Importing DCGM Dashboard
 
 The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/. 
 
@@ -328,3 +319,23 @@ Now you should have succesfully imported the NVIDIA DCGM Exporter Dashboard, use
 
 ![Image](img/05/5.10.png)
 
+## Knowledge Base
+### Model pod automatically terminated (Workaround)
+
+Post deploying your model, after some time the pod for the model may terminate. You have to manually go into the console and spin it back up to 1. After this, the model should not terminate again and it the model pod should succesfully be created. This is a current bug that is caused by large models being deployed. We believe the issue may be caused because the model is of a size that it takes a while to get it in place on the node or into the cluster that it isn't given a proper enough amount of breathing room to actually allow it to start up. This bug is currently in the backlog of things to fix. So for now with bigger models like granite, you will have to manually spin the pod back up.
+
+![Image](img/04/4.7.png)
+
+After some minutes you can see my pod was terminated the deployment scaled to 0. I will just manually scale it back to 1 in the UI, or I can run the following command from the cli:
+
+```
+oc scale deployment/[deployment_name] --replicas=1 -n [namespace] --as system:admin
+```
+
+For me this looks like
+
+```
+oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sandbox --as system:admin
+```
+
+After this it will take some time for the model pod to spin back up.
