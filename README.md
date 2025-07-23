@@ -37,7 +37,7 @@ oc apply -f minio-setup.yaml
 
 ## 2. Downloading Model 
 
-Navigate to https://huggingface.co/ and find the model you would like to deploy. For this guide I am going to be downloading the granite-3.0-8b-instruct model (https://huggingface.co/ibm-granite/granite-3.0-8b-instruct/tree/main).
+Navigate to https://huggingface.co/ and find the model you would like to deploy. In this workshop, we will be using Red Hat certified models at https://huggingface.co/RedHatAI. We will use the ([phi-4-quantized.w4a16 model](https://huggingface.co/RedHatAI/phi-4-quantized.w4a16)).
 
 First you need to generate an access token:
 1. Navigate to settings -> access tokens
@@ -54,7 +54,7 @@ git clone https://<user_name>:<token>@huggingface.co/<repo_path>
 For me this looks like
 
 ```
-git clone https://IsaiahS1:<token>@huggingface.co/ibm-granite/granite-3.0-8b-instruct
+git clone https://cbtham:<token>@huggingface.co/RedHatAI/phi-4-quantized.w4a16
 ```
 
 
