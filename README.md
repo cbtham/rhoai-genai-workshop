@@ -180,9 +180,46 @@ Congratulations! You have now successfully deployed a LLM model on Red Hat Opens
 ## 5. Deploy a custom workbench to interact with the LLM
 
 ### 5.1 AnythingLLM
-#![Image](img/05/5.1png)
-### 5.2 Retrieval Augmented Generation with AnythingLLM 
-#![Image](img/05/5.1png)
+AnythingLLM is a full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
+
+#### 5.1.1 Custom Workbench in Red Hat Openshift AI
+To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily.
+1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/repository/rh-aiservices-bu/anythingllm-workbench``` Copy the URL and paste it into Settings > Workbench Images > image location.
+
+![Image](img/05/5.1.png)
+
+1. Save it and go into your project. Create a new workbench, pick the name of the workbench you have given in the previous step.
+![Image](img/05/5.2.png)
+
+1. Wait for the workbench to start. You should see a green status showing it is running. Click on the name to navigate to AnythingLLM UI
+
+![Image](img/05/5.3.png)
+
+### 5.2 Connecting AnythingLLM with our private hosted open-sourced model
+AnythingLLM is able to consume inference endpoints from multiple AI provider. In this execise, we will connect it to our privately hosted LLM inference endpoints set up in previous steps.
+
+1. Select OpenAI Compatible API
+
+1. Paste the link and append **/v1** on it. It should look like
+
+```https://qwen3-4b-fp8-dynamic-cbtham-demo-llm.apps.cluster-q2cbm.q2cbm.sandbox1007.opentlc.com/v1```
+
+1. Paste the token copied from above steps as the API key. The token starts with ey....
+
+1. Use qwen3-4b-fp8-dynamic as the name of the model, or you may key in the name of your model that you want to use.
+
+1. Once it is saved, navigate back to the main page of AnythingLLM and start a chat. If everything is set up properly, you will be greeted with a response from the LLM.
+
+![Image](img/05/5.4.png)
+
+### 5.3 Retrieval Augmented Generation with AnythingLLM 
+RAG, or Retrieval-Augmented Generation, is an AI framework that combines the strengths of traditional information retrieval systems with generative large language models (LLMs). It allows LLMs to access and reference information outside their training data to provide more accurate, up-to-date, and relevant responses. Essentially, RAG enhances LLMs by enabling them to tap into external knowledge sources, like documents, databases, or even the internet, before generating text.
+
+For the purpose of demonstration, we will use a local vector database - LanceDB.
+
+LanceDB is deployed part of anythingLLM. You may explore the settings page of anythingLLM to provide your own vector database.
+
+
 
 ## 6. Setting up Observability Stack & Collecting Metrics
 
@@ -258,9 +295,9 @@ oc get secret grafana-prometheus-token \
 
 Navigate to data sources -> add data source
 
-![Image](img/05/5.1.png)
+![Image](img/06/5.1.png)
 
-![Image](img/05/5.2.png)
+![Image](img/06/5.2.png)
 
 Select Prometheus as the data source, then fill in the following values:
 - ***Prometheus Server URL***: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
@@ -275,7 +312,7 @@ Select Prometheus as the data source, then fill in the following values:
 
 Once the above is filled out, hit save and test at the bottom. You should then see the following:
 
-![Image](img/05/5.3.png)
+![Image](img/06/5.3.png)
 
 3. Verify vLLM and DCGM Metrics can be read from Data Source
 
@@ -283,9 +320,9 @@ We want to make sure Grafana is actually getting the vLLM and DCGM metrics from 
 
 Go to explore->metrics explorer and then for the metric value type vllm, verify that you can see the diffeent vllm metrics. Then type DCGM, and verify you can see the different DCGM metrics.
 
-![Image](img/05/5.4.png)
+![Image](img/06/5.4.png)
 
-![Image](img/05/5.5.png)
+![Image](img/06/5.5.png)
 
 
 ### 6.3 Importing vLLM Dashboard
@@ -294,11 +331,11 @@ The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be fou
 
 Go to Dashboards -> Create Dashboard
 
-![Image](img/05/5.6.png)
+![Image](img/06/5.6.png)
 
 Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json) or just copy and paste the yaml into the box provided.
 
-![Image](img/05/5.7.png)
+![Image](img/06/5.7.png)
 
 Then hit load, then Import.
 
@@ -309,15 +346,15 @@ The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashbo
 
 Go back to dashboards in Grafana UI and select new->import. Copy the following dashboard ID: `12239`. Paste that dashboard ID on Import Dashboard page. Then hit load.
 
-![Image](img/05/5.8.png)
+![Image](img/06/5.8.png)
 
 Select prometheus data source then select Import.
 
-![Image](img/05/5.9.png)
+![Image](img/06/5.9.png)
 
 Now you should have succesfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
 
-![Image](img/05/5.10.png)
+![Image](img/06/5.10.png)
 
 ## Knowledge Base
 ### Model pod automatically terminated (Workaround)
