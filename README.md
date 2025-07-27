@@ -244,14 +244,32 @@ You may insert your own pdf, csv or any disgestable format for RAG. In this guid
 
 1. We first ask a question and capture the default response. We'll see the LLM gave us a generic response.
    > Ask: What is an AI tool from Intel?
-1. Now lets implement RAG by scapping a website. The website has a section which have a better answer to our previous question.
-1. Navigate to the front page of AnythingLLM by click the logo, and select "embed a document" from the get started section.
-    ![Image](img/05/5.7.png)
-1. Select Data Connector and click bulk link scrapper.
-    ![Image](img/05/5.8.png)
-1. Input the link and set the depth to 2.
-   > https://www.redhat.com/en/resources/openshift-ai-overview
+   ![Image](img/05/5.7.png)
+   
+   We can see the response is short and very generic.
 
+#### Option 1 : Upload your own data (PDF)
+2. Now lets implement RAG by attaching a pdf. Click on the upload button beside your user workspace. Upload the pdf rag-demo.pdf in this repository.
+    ![Image](img/05/5.7.1.png)
+3. After that, move it to the workspace and click Save and Embed.
+    ![Image](img/05/5.7.2.png)
+4. We can see the answer after RAG is more detailed with reference to the data we uploaded.
+    ![Image](img/05/5.7.3.png)
+
+#### Option 2 : Scrapping a website
+
+5. Now lets try another way to implement RAG by scapping a website. The website has a section which have a better answer to our previous question.
+6. Instead of upload a document, select Data Connector and click bulk link scrapper.
+    ![Image](img/05/5.8.png)
+7. Input the link, set the depth to 1 and click Submit.
+   > https://www.redhat.com/en/resources/openshift-ai-overview
+8. Web scrapping will take some time especially with the depth set to a higher value. If you are an admin, you can navigate to the anythingllm pod and see the process of scrapping, chucking and embedding.
+9. Once this step is done, you will see the data available. Move it to the workspace, save and embed.
+    ![Image](img/05/5.7.4.png)
+10. After that, ask a question and you can see the answer is much detailed and with reference to the scrapped website.
+
+11. Behind the scenes, anythingllm scrapped the website, chucked it and embeded it into the workspace.
+    ![Image](img/05/5.7.5.png)
 
 ## 6. Setting up Observability Stack & Collecting Metrics
 
