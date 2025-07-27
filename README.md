@@ -192,13 +192,18 @@ Congratulations! You have now successfully deployed a LLM model on Red Hat Opens
 AnythingLLM is a full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
 #### 5.1.1 AnythingLLM in Red Hat Openshift AI
-To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily.
+To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily. 
   1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/repository/rh-aiservices-bu/anythingllm-workbench``` Copy the URL and paste it into Settings > Workbench Images > image location.
 
       ![Image](img/05/5.1.png)
+  This step may already have been setup by your admin. If you are participating in a workshop, skip this and continue on.
 
   1. Save it and go into your project. Create a new workbench, pick the name of the workbench you have given in the previous step.
       ![Image](img/05/5.2.png)
+
+      Remember to change your storage and append your user to avoid name clash.
+      
+      ![Image](img/05/5.2.1.png)
 
   1. Wait for the workbench to start. You should see a green status showing it is running. Click on the name to navigate to AnythingLLM UI.
 
