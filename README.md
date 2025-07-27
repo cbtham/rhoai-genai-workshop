@@ -85,6 +85,11 @@ git clone https://cbtham:<token>@huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a1
 
 ## 4. Deploying Model on Red Hat OpenShift AI
 
+### 4.0.1 Create a workspace
+Login to your openshift account. Go to Datascience Projects and create a project.
+
+  ![Image](img/04/4.0.png)
+
 ### 4.1 Create S3 Storage Data Connection on Red Hat Openshift AI
 
 In the Red Hat OpenShift AI portal, we will need to create a linkage to the deployed S3 storage. You can also BYO Storage by connecting it with the S3 compatible storage you prefer.
@@ -94,13 +99,13 @@ In the Red Hat OpenShift AI portal, we will need to create a linkage to the depl
     ![Image](img/04/4.1.png)
 
 2. Fill in the following values:
-- Connection name: name of your data connection
-- Access key: username of minio deployment
-- Secret key: password for minio deployment
-- Endpoint: endpoint of the minio deployment 
-- Bucket: name of the minio bucket you created
+- Connection name: name of your data connection **[https://minio-api-admin-demo.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com]**
+- Access key: username of minio deployment **[minio]**
+- Secret key: password for minio deployment **[minio123]**
+- Endpoint: **API** endpoint of the minio deployment 
+- Bucket: name of the minio bucket you created **[models]**
 
-    ![Image](img/04/4.2.png)
+  ![Image](img/04/4.2.png)
 
 ### 4.2. Deploy your Model!
 
@@ -181,12 +186,12 @@ You can change the ***temperature*** of the query. The temperature essentially c
 
 Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
 
-## 5. Deploy a custom workbench to interact with the LLM
+## 5. Deploy A Custom Workbench To Interact With The LLM
 
 ### 5.1 AnythingLLM
 AnythingLLM is a full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
-#### 5.1.1 Custom Workbench in Red Hat Openshift AI
+#### 5.1.1 AnythingLLM in Red Hat Openshift AI
 To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily.
   1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/repository/rh-aiservices-bu/anythingllm-workbench``` Copy the URL and paste it into Settings > Workbench Images > image location.
 
@@ -199,22 +204,28 @@ To get started quickly, we will use a custom workbench - a feature offered by Re
 
       ![Image](img/05/5.3.png)
 
-### 5.2 Connecting AnythingLLM with our private hosted open-sourced model
+### 5.2 Connecting AnythingLLM To Our Privately Hosted Model
 AnythingLLM is able to consume inference endpoints from multiple AI provider. In this execise, we will connect it to our privately hosted LLM inference endpoints set up in previous steps.
 
 1. Select OpenAI Compatible API
 
-1. Paste the link and append **/v1** on it. It should look like
+    ![Image](img/05/5.4.png)
+
+1. Paste the baseURL from your deployed model(external endpoint) and append **/v1** on it. It should look like
 
     ```https://qwen3-4b-quantizedw4a16-cbtham-demo-llm.apps.cluster-q2cbm.q2cbm.sandbox1007.opentlc.com/v1```
 
 1. Paste the token copied from above steps as the API key. The token starts with ey....
 
-1. Use qwen3-4b-quantizedw4a16 as the name of the model, or you may key in the name of your model that you want to use.
+    ![Image](img/05/5.5.png)
+
+1. Use qwen3-4b-quantizedw4a16 as the name of the model, or you may key in the name of your model that you want to use. You can extract it from the deployed model URL.
+
+1. Set the context window and max token to 4096.
 
 1. Once it is saved, navigate back to the main page of AnythingLLM and start a chat. If everything is set up properly, you will be greeted with a response from the LLM.
 
-    ![Image](img/05/5.4.png)
+    ![Image](img/05/5.6.png)
 
 ### 5.3 Retrieval Augmented Generation with AnythingLLM 
 RAG, or Retrieval-Augmented Generation, is an AI framework that combines the strengths of traditional information retrieval systems with generative large language models (LLMs). It allows LLMs to access and reference information outside their training data to provide more accurate, up-to-date, and relevant responses. Essentially, RAG enhances LLMs by enabling them to tap into external knowledge sources, like documents, databases, or even the internet, before generating text.
@@ -222,6 +233,20 @@ RAG, or Retrieval-Augmented Generation, is an AI framework that combines the str
 For the purpose of demonstration, we will use a local vector database - LanceDB.
 
 LanceDB is deployed part of anythingLLM. You may explore the settings page of anythingLLM to provide your own vector database.
+
+### 5.4 Scraping Website For RAG
+You may insert your own pdf, csv or any disgestable format for RAG. In this guide, we will up a notch to scape website and use it's data as RAG. We will use built-in scapper from AnythingLLM, after getting the data, it will chunk it and store in the vector database lanceDB for retrieval.
+
+1. We first ask a question and capture the default response. We'll see the LLM gave us a generic response.
+   > Ask: What is an AI tool from Intel?
+1. Now lets implement RAG by scapping a website. The website has a section which have a better answer to our previous question.
+1. Navigate to the front page of AnythingLLM by click the logo, and select "embed a document" from the get started section.
+    ![Image](img/05/5.7.png)
+1. Select Data Connector and click bulk link scrapper.
+    ![Image](img/05/5.8.png)
+1. Input the link and set the depth to 2.
+   > https://www.redhat.com/en/resources/openshift-ai-overview
+
 
 ## 6. Setting up Observability Stack & Collecting Metrics
 
