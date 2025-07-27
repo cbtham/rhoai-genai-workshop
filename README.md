@@ -193,7 +193,7 @@ AnythingLLM is a full-stack application that enables you to turn any document, r
 
 #### 5.1.1 AnythingLLM in Red Hat Openshift AI
 To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily. 
-  1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/repository/rh-aiservices-bu/anythingllm-workbench``` Copy the URL and paste it into Settings > Workbench Images > image location.
+  1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/rh-aiservices-bu/anythingllm-workbench:1.7.5``` Copy the URL and paste it into Settings > Workbench Images > image location.
 
       ![Image](img/05/5.1.png)
   This step may already have been setup by your admin. If you are participating in a workshop, skip this and continue on.
