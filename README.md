@@ -86,7 +86,7 @@ git clone https://cbtham:<token>@huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a1
 ## 4. Deploying Model on Red Hat OpenShift AI
 
 ### 4.0.1 Create a workspace
-Login to your openshift account. Go to Datascience Projects and create a project.
+Login to your openshift account. If you're in a workshop, click [here](https://rhods-dashboard-redhat-ods-applications.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com/). Go to Datascience Projects and create a project.
 
   ![Image](img/04/4.0.png)
 
