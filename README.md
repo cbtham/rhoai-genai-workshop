@@ -99,10 +99,10 @@ In the Red Hat OpenShift AI portal, we will need to create a linkage to the depl
     ![Image](img/04/4.1.png)
 
 2. Fill in the following values:
-- Connection name: name of your data connection **[https://minio-api-admin-demo.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com]**
+- Connection name: name of your data connection **MinIO**
 - Access key: username of minio deployment **[minio]**
 - Secret key: password for minio deployment **[minio123]**
-- Endpoint: **API** endpoint of the minio deployment 
+- Endpoint: **API** endpoint of the minio deployment **[https://minio-api-admin-demo.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com]**
 - Bucket: name of the minio bucket you created **[models]**
 
   ![Image](img/04/4.2.png)
