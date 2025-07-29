@@ -109,9 +109,11 @@ In the Red Hat OpenShift AI portal, we will need to create a linkage to the depl
 
 ### 4.2. Deploy your Model!
 
-Navigate to Models within your Data Science Project and select single-model serving:
+If you are in a workshop, navigate to the [Minio UI](https://minio-ui-admin-demo.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com/). You'll see a few pre-uploaded models. Pick one of it as part of the exercise.
 
-***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step***
+Go to the Models tab within your Data Science Project and select single-model serving:
+
+<!-- ***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step*** -->
 
   ![Image](img/04/4.3.png)
 
