@@ -136,7 +136,7 @@ Once that is done, you are all set to hit Deploy! It will take some time for the
 
 ### 4.3 Query Model Inference Endpoint
 
-Once your model pod is in a running state, you can try querying it in order to test if the endpoint is reachable and the model is returning correctly
+Once your model pod is in a running state, you can try querying it in order to test if the endpoint is reachable and the model is returning correctly. The status will have a green tick.
 
 1. Get the URL for the model endpoint, you can get this by selecting internal and external endpoint details from the RHOAI UI within the models tab in your Data Science Project:
 
@@ -149,9 +149,11 @@ Once your model pod is in a running state, you can try querying it in order to t
 3. Now that you have the URL and Authorization Token, you can try querying the model endpoint. We will try multiple queries.
 
 #### /v1/models
-Let's start with the simplest query, the /v1/models endpoint. This endpoint just returns information about the models being served, I use it to simply see if the model can accept a request and return with some information:
+Let's start with the simplest query, the /v1/models endpoint. This endpoint just returns information about the models being served, we can use it to simply see if the model can accept a request and return with some information. Open up a command window or terminal of your chosing on your computer:
 
-```
+> Note: Remember to change the url and bearer token. the url must end with v1/models.
+
+```shell
 curl -k -X GET https://url/v1/models -H "Authorization: Bearer YOUR_BEARER_TOKEN"
 ```
 
@@ -163,7 +165,7 @@ Running this command should return an output similar to the below output
 
 Now that we know that works, let's test whether the /v1/completions endpoint works. This endpoint takes a text prompt and returns a completed text response. 
 
-```
+```shell
 curl -k -X POST https://url/v1/completions \
     -H "Content-Type: application/json" -H "Authorization: Bearer YOUR_BEARER_TOKEN" \
     -d '{
@@ -197,7 +199,7 @@ To get started quickly, we will use a custom workbench - a feature offered by Re
   >*Step 1 may already have been setup by your admin. If you are participating in a workshop, skip this and continue on to **step 2**.*
 
   1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/rh-aiservices-bu/anythingllm-workbench:1.7.5``` Copy the URL and paste it into Settings > Workbench Images > image location.
-  
+
       ![Image](img/05/5.1.png)
 
 
@@ -205,7 +207,7 @@ To get started quickly, we will use a custom workbench - a feature offered by Re
 
       ![Image](img/05/5.2.png)
 
-      Remember to change your storage and append your user to avoid name clash.
+      Remember to make your storage name unique to avoid name clash.
       
       ![Image](img/05/5.2.1.png)
 
@@ -272,7 +274,7 @@ You may insert your own pdf, csv or any disgestable format for RAG. In this guid
     ![Image](img/05/5.7.4.png)
 10. After that, ask a question and you can see the answer is much detailed and with reference to the scrapped website.
 
-11. Behind the scenes, anythingllm scrapped the website, chucked it and embeded it into the workspace.
+11. Behind the scenes, anythingllm scrapped the website, chucked it and embeded it into the workspace. This view is only available as admin.
     ![Image](img/05/5.7.5.png)
 
 ## 6. Setting up Observability Stack & Collecting Metrics
