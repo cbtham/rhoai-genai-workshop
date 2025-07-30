@@ -25,7 +25,7 @@ oc apply -f minio-setup.yaml
 ```
 
 
-2. Give it a minute, nd there should now be a running minio pod:
+2. Give it a minute, and there should now be a running minio pod:
 
 ![Image](img/01/1.3.png)
 
@@ -128,7 +128,7 @@ After selecting single-models serving, select Deploy Model
 - ***Accelerator***: Select NVIDIA GPU
 - ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
 - ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name
-- ***Source model location***: Select the data connection that you set up in step 4.1. Then provide it the path to your model. If you're follow this guide, the path will be qwen3-4b-quantizedw4a16. If you're unsure of the path you can go to the minio-ui, navigate to the models bucket you create, and see the name of the directory where the model is stored.
+- ***Source model location***: Select the data connection that you set up in step 4.1. Then provide it the path to your model. If you're following this guide, the path will be qwen3-4b-quantizedw4a16. If you're unsure of the path you can go to the minio-ui, navigate to the models bucket you created, and see the name of the directory where the model is stored.
 
   ![Image](img/04/4.5.png)
 
@@ -184,7 +184,7 @@ Running this command should return an output similar to the following:
 
 You can see within "text" the completed response "Red Hat is a... a company that provides software and services."
 
-You can change the ***temperature*** of the query. The temperature essentially controls the "randomness" of the model's response. The lower the temperature the more deterministic the reponse, the higher the temperature the more random/unpredictible the response. So if you set the temperature to 0, it would always return the same output since there would be no randomness. 
+You can change the ***temperature*** of the query. The temperature essentially controls the "randomness" of the model's response. The lower the temperature the more deterministic the response, the higher the temperature the more random/unpredictable the response. So if you set the temperature to 0, it would always return the same output since there would be no randomness. 
 
 ### 4.4 Wrapping Up
 
@@ -218,7 +218,7 @@ To get started quickly, we will use a custom workbench - a feature offered by Re
       ![Image](img/05/5.3.png)
 
 ### 5.2 Connecting AnythingLLM To Our Privately Hosted Model
-AnythingLLM is able to consume inference endpoints from multiple AI provider. In this execise, we will connect it to our privately hosted LLM inference endpoints set up in previous steps.
+AnythingLLM is able to consume inference endpoints from multiple AI provider. In this exercise, we will connect it to our privately hosted LLM inference endpoints set up in previous steps.
 
 1. Select OpenAI Compatible API
 
@@ -245,10 +245,10 @@ RAG, or Retrieval-Augmented Generation, is an AI framework that combines the str
 
 For the purpose of demonstration, we will use a local vector database - LanceDB.
 
-LanceDB is deployed part of anythingLLM. You may explore the settings page of anythingLLM to provide your own vector database.
+LanceDB is deployed as part of AnythingLLM. You may explore the settings page of AnythingLLM to provide your own vector database.
 
 ### 5.4 Scraping Website For RAG
-You may insert your own pdf, csv or any disgestable format for RAG. In this guide, we will up a notch to scape website and use it's data as RAG. We will use built-in scapper from AnythingLLM, after getting the data, it will chunk it and store in the vector database lanceDB for retrieval.
+You may insert your own pdf, csv or any digestible format for RAG. In this guide, we will step up a notch to scrape website and use its data as RAG. We will use built-in scraper from AnythingLLM, after getting the data, it will chunk it and store in the vector database LanceDB for retrieval.
 
 1. We first ask a question and capture the default response. We'll see the LLM gave us a generic response.
    > Ask: What is an AI tool from Intel?
@@ -266,17 +266,17 @@ You may insert your own pdf, csv or any disgestable format for RAG. In this guid
 
 #### Option 2 : Scrapping a website
 
-5. Now lets try another way to implement RAG by scapping a website. The website has a section which have a better answer to our previous question.
-6. Instead of upload a document, select Data Connector and click bulk link scrapper.
+5. Now let's try another way to implement RAG by scraping a website. The website has a section which has a better answer to our previous question.
+6. Instead of uploading a document, select Data Connector and click bulk link scraper.
     ![Image](img/05/5.8.png)
 7. Input the link, set the depth to 1 and click Submit.
    > https://www.redhat.com/en/resources/openshift-ai-overview
-8. Web scrapping will take some time especially with the depth set to a higher value. If you are an admin, you can navigate to the anythingllm pod and see the process of scrapping, chucking and embedding.
+8. Web scraping will take some time especially with the depth set to a higher value. If you are an admin, you can navigate to the anythingllm pod and see the process of scraping, chunking and embedding.
 9. Once this step is done, you will see the data available. Move it to the workspace, save and embed.
     ![Image](img/05/5.7.4.png)
-10. After that, ask a question and you can see the answer is much detailed and with reference to the scrapped website.
+10. After that, ask a question and you can see the answer is much more detailed and with reference to the scraped website.
 
-11. Behind the scenes, anythingllm scrapped the website, chucked it and embeded it into the workspace. This view is only available as admin.
+11. Behind the scenes, AnythingLLM scraped the website, chunked it and embedded it into the workspace. This view is only available as admin.
     ![Image](img/05/5.7.5.png)
 
 ## 6. Setting up Observability Stack & Collecting Metrics
@@ -295,7 +295,7 @@ oc apply -f obs/cluster-monitoring-config.yaml -n openshift-monitoring
 
 #### 6.1.2 Add vLLM metrics to user-workload (uwl) metrics allowlist
 
-Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want to Prometheus to gather. We can do this be adding `vllm:.*` to the `metrics_allowlist.yaml` in the project namespace. Before applying the yaml, make sure to **CHANGE** the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, deploy with the following command.
+Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want Prometheus to gather. We can do this by adding `vllm:.*` to the `metrics_allowlist.yaml` in the project namespace. Before applying the yaml, make sure to **CHANGE** the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, deploy with the following command.
 
 ```shell
 oc apply -f obs/metrics_allowlist.yaml
@@ -377,7 +377,7 @@ Once the above is filled out, hit save and test at the bottom. You should then s
 
 We want to make sure Grafana is actually getting the vLLM and DCGM metrics from the Data Source.
 
-Go to explore->metrics explorer and then for the metric value type vllm, verify that you can see the diffeent vllm metrics. Then type DCGM, and verify you can see the different DCGM metrics.
+Go to explore->metrics explorer and then for the metric value type vllm, verify that you can see the different vllm metrics. Then type DCGM, and verify you can see the different DCGM metrics.
 
 ![Image](img/06/5.4.png)
 
@@ -411,14 +411,14 @@ Select prometheus data source then select Import.
 
 ![Image](img/06/5.9.png)
 
-Now you should have succesfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
+Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
 
 ![Image](img/06/5.10.png)
 
 ## Knowledge Base
 ### Model pod automatically terminated (Workaround)
 
-Post deploying your model, after some time the pod for the model may terminate. You have to manually go into the console and spin it back up to 1. After this, the model should not terminate again and it the model pod should succesfully be created. This is a current bug that is caused by large models being deployed. We believe the issue may be caused because the model is of a size that it takes a while to get it in place on the node or into the cluster that it isn't given a proper enough amount of breathing room to actually allow it to start up. This bug is currently in the backlog of things to fix. So for now with bigger models like granite, you will have to manually spin the pod back up.
+Post deploying your model, after some time the pod for the model may terminate. You have to manually go into the console and spin it back up to 1. After this, the model should not terminate again and the model pod should successfully be created. This is a current bug that is caused by large models being deployed. We believe the issue may be caused because the model is of a size that it takes a while to get it in place on the node or into the cluster that it isn't given a proper enough amount of breathing room to actually allow it to start up. This bug is currently in the backlog of things to fix. So for now with bigger models like granite, you will have to manually spin the pod back up.
 
 ![Image](img/04/4.7.png)
 
