@@ -281,6 +281,12 @@ You may insert your own pdf, csv or any digestible format for RAG. In this guide
 
 ## 6. Setting up Observability Stack & Collecting Metrics
 
+The following section requires you run code in a Terminal. You can run this directly on Red Hat Openshift console or run this through your local terminal connected to the openshift cluster. When you are ready, git clone this repository.
+
+```shell
+git clone https://github.com/cbtham/rhoai-genai-workshop.git
+```
+
 ### 6.1 Prometheus 
 
 #### 6.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
