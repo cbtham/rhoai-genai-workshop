@@ -297,9 +297,10 @@ oc apply -f obs/cluster-monitoring-config.yaml -n openshift-monitoring
 
 Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want to Prometheus to gather. We can do this be adding `vllm:.*` to the `metrics_allowlist.yaml` in the project namespace. Before applying the yaml, make sure to **CHANGE** the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, deploy with the following command.
 
-```
+```shell
 oc apply -f obs/metrics_allowlist.yaml
 ```
+> Note: If you face Error from server (NotFound): error when creating "obs/metrics_allowlist.yaml": namespaces "YOUR_PROJECT_NAMESPACE" not found, modify the metrics_allowlist.yaml to include reflect your project namespace.
 
 ### 6.2 Grafana
 
@@ -338,7 +339,7 @@ This is used so that Grafana can access the Prometheus Data Source.
 
 
 ```
-oc apply -f obs/grafana-prometheus-token.yaml -n grafana
+oc apply -f obs/grafana-prometheus-token.yaml -n grafana --namespace=openshift-monitoring
 ```
 
 Get the token by running the following command:
