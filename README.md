@@ -1,4 +1,4 @@
-# Guide to Deploying AI Models on Red Hat OpenShift AI (RHOAI)
+# Guide To Deploy AI Models on Red Hat OpenShift AI (RHOAI)
 
 ## Prerequisites 
 
