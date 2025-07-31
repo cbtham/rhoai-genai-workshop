@@ -1,5 +1,18 @@
 # Guide To Deploy AI Models on Red Hat OpenShift AI (RHOAI)
 
+## Overview
+1.  Walkthrough of the provisioned environment, Red Hat Openshift AI Dashboard
+
+1. Create and connect to the Object Store
+
+1. Deploy a generative AI model with serving endpoint
+
+1. Create and use a custom workbench with the deployed inference server
+
+1. QnA with Retrieval Augmented Generation
+
+1. Monitor the deployed model
+
 ## Prerequisites 
 
 A cluster that has been properly configured for model serving. If cluster is not yet properly configured follow the [Guide to Configuring RHOAI for Model Deployment](https://github.com/IsaiahStapleton/rhoai-config-guide)
