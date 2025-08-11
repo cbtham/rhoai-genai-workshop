@@ -1,0 +1,63 @@
+# Grafana ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grafana
+  namespace: llm-d-monitoring
+---
+# Grafana Deployment (references split ConfigMaps and separate Service/Route files)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: llm-d-monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      serviceAccountName: grafana
+      containers:
+      - name: grafana
+        image: grafana/grafana:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        volumeMounts:
+        - name: grafana-config
+          mountPath: /etc/grafana/grafana.ini
+          subPath: grafana.ini
+        - name: grafana-datasources
+          mountPath: /etc/grafana/provisioning/datasources
+        - name: grafana-dashboard-config
+          mountPath: /etc/grafana/provisioning/dashboards
+        - name: grafana-dashboards
+          mountPath: /var/lib/grafana/dashboards
+      volumes:
+      - name: grafana-config
+        configMap:
+          name: grafana-config
+          defaultMode: 420
+      - name: grafana-datasources
+        configMap:
+          name: grafana-datasources
+          defaultMode: 420
+      - name: grafana-dashboard-config
+        configMap:
+          name: grafana-dashboards-config
+          defaultMode: 420
+      - name: grafana-dashboards
+        configMap:
+          name: grafana-dashboard-llm-performance
+          defaultMode: 420

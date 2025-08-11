@@ -90,7 +90,9 @@ Option 1 explores the method of using a pre-built container as a serving endpoin
 1. Next, append the URI with oci://
 ![Image](img/03/3.1.2.png)
 1. Wait for the model to finish deploy and the status turns green. 
-> Note: It may take up to a few minutes depending on model size.
+    > Note: It may take up to a few minutes depending on model size.
+
+    ![Image](img/03/3.1.4.png)
 
 ### Option 2: Upload Model to the S3 Minio Storage
 
