@@ -73,8 +73,28 @@ git clone https://cbtham:<token>@huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a1
 ```
 
 
-## 3. Uploading the Model to the S3 Minio Storage
+## 3. Deploy a generative AI model with serving endpoint
 
+### Option 1: Use a pre-built modelcar container
+Option 1 explores the method of using a pre-built container as a serving endpoint. We will deploy this modelcar container. This is the easiest way to get a LLM model running on Red Hat OpenShift AI.
+
+1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog
+1. Select a containerized model you want to use. In this example, we will use qwen3-4b. 
+1. Click the download/save button to reveal the tags, select any of the tag to reveal the URI.
+![Image](img/03/3.1.3.png)
+1. Copy the URL from quay.io onwards.
+1. Next, deploy the model by navigating to the Models tab in your workspace on Red Hat Openshift AI.
+1. Fill in the details, ensure to choose nvidia gpu serving runtime and deployment mode to Standard.
+![Image](img/03/3.1.1.png)
+1. Select connection type *URI - v1* and give it a name. A good practice is to name it the model you are about to deploy.
+1. Next, append the URI with oci://
+![Image](img/03/3.1.2.png)
+1. Wait for the model to finish deploy and the status turns green. 
+> Note: It may take up to a few minutes depending on model size.
+
+### Option 2: Upload Model to the S3 Minio Storage
+
+Option 2 explores a method to upload a model from HuggingFace to S3 Storage.
 1. Assuming you followed the steps above to deploy minio storage, navigate to the minio UI, found in Networking -> routes within the openshift console.
 
     ![Image](img/03/3.1.png)
@@ -237,7 +257,7 @@ AnythingLLM is able to consume inference endpoints from multiple AI provider. In
 
     ![Image](img/05/5.4.png)
 
-1. Paste the baseURL from your deployed model(external endpoint) and append **/v1** on it. It should look like
+1. Paste the baseURL from your deployed model(external endpoint) and append **/v1** on it. It will look like this example
 
     ```https://qwen3-4b-quantizedw4a16-cbtham-demo-llm.apps.cluster-q2cbm.q2cbm.sandbox1007.opentlc.com/v1```
 
@@ -245,7 +265,7 @@ AnythingLLM is able to consume inference endpoints from multiple AI provider. In
 
     ![Image](img/05/5.5.png)
 
-1. Use qwen3-4b-quantizedw4a16 as the name of the model, or you may key in the name of your model that you want to use. You can extract it from the deployed model URL.
+1. Use the name of the model you deployed. In this example, I use qwen3-4b-quantizedw4a16 as the name of the model. You may key in the name of your model that you want to use. You can refer the model name from the deployed model URL at Red Hat OpenShift AI models tab.
 
 1. Set the context window and max token to 4096.
 
