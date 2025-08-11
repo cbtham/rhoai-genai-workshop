@@ -404,7 +404,7 @@ Select Prometheus as the data source, then fill in the following values:
 - ***Skip TLS certificate Validation***: Check this box 
 - ***HTTP headers***:
     - Header: Authorization
-    - Value: Bearer [Token created in step 5.5]
+    - Value: Bearer [Token created in step 6.2.2]
 
   > Prometheus server url is the same for everyone
   
