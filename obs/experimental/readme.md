@@ -40,4 +40,6 @@ To deploy, make sure you are in the /experimental folder
 
 1. ```oc apply -f grafana-dashboard-llm-performance.yaml -n llm-d-monitoring```
 
+1. ```oc apply -f grafana.yaml -n llm-d-monitoring```
+
 1. ```oc apply -f expose-grafana.yaml -n llm-d-monitoring```
