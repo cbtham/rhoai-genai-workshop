@@ -31,14 +31,16 @@ Login to your openshift account. If you're in a workshop, click [here](https://r
 ### Use a pre-built modelcar container
 Using a pre-built container as a serving endpoint, we will deploy this modelcar container. This is the easiest way to get a LLM model running on Red Hat OpenShift AI.
 
-
 1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog
-1. Select a containerized model you want to use. In this example, we will use qwen3-4b. 
+1. Select a containerized model you want to use. In this example, we will use qwen3-4b.
+
 1. Click the download/save button to reveal the tags, select any of the tag to reveal the URI.
 ![Image](../img/03/3.1.3.png)
 1. Copy the URL from quay.io onwards.
+
 1. Next, deploy the model by navigating to the Models tab in your workspace on Red Hat Openshift AI. Go to the Models tab within your Data Science Project and select single-model serving:
 ![Image](../img/04/4.3.png)
+
 <!-- ***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step*** -->
 
   
@@ -47,6 +49,18 @@ Using a pre-built container as a serving endpoint, we will deploy this modelcar 
 1. Select connection type *URI - v1* and give it a name. A good practice is to name it the model you are about to deploy.
 1. Next, append the URI with oci://
 ![Image](../img/03/3.1.2.png)
+
+    ```
+    oci://quay.io/redhat-ai-services/modelcar-catalog:qwen3-4b
+    ```
+
+>Note: If you face resource problems, try select a smaller model. For example qwen2.5-0.7b
+
+    ```
+    oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2.5-0.5b-instruct
+    ```
+
+
 - ***Model deployment name***: Name of the deployed model
 - ***Serving runtime***: vLLM NVIDIA GPU ServingRuntime for KServe
 - ***Model server size***: You can select whatever size you wish, for this guide I will keep the small size 
