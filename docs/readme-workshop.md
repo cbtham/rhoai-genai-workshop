@@ -15,7 +15,9 @@
 
 ### Prerequisites for environment 
 
-A RHOAI cluster that has been properly configured for model serving. Provision a demo environment from the demo catalog. For attendees, this is already setup for you.
+A RHOAI cluster that has been properly configured for model serving. 
+- For Red Hatters, provision a demo environment from the demo catalog. 
+- For attendees, this is already setup for you.
 
 ## Purpose
 
