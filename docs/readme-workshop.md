@@ -409,3 +409,6 @@ oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sand
 ```
 
 After this it will take some time for the model pod to spin back up.
+
+#
+![](https://komarev.com/ghpvc/?username=cbtham&label=REPO+VISITS&base=440&abbreviated=true)
