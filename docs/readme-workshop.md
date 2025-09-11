@@ -13,39 +13,45 @@
 
 1. Monitor the deployed model
 
-## Prerequisites 
+### Prerequisites for environment 
 
-A cluster that has been properly configured for model serving. If cluster is not yet properly configured follow the [Guide to Configuring RHOAI for Model Deployment](https://github.com/IsaiahStapleton/rhoai-config-guide)
+A RHOAI cluster that has been properly configured for model serving. Provision a demo environment from the demo catalog. For attendees, this is already setup for you.
 
 ## Purpose
 
-The purpose for this guide is to offer the simplest steps for deploying a **privately hosted AI model** on Red Hat Openshift AI. This guide will be covering deploying a Red Hat certified ***Qwen3 Model*** using the ***vLLM ServingRuntime for KServe*** on ***NVIDIA GPU***. In addition to deploying the model, this guide will cover setting up a simple observability stack so that you can collect and visualize metrics related to AI model performance and GPU information.
+The purpose for this guide is to offer the simplest steps for deploying a **privately hosted AI model** on Red Hat Openshift AI. This guide will be covering deploying a Red Hat certified ***Qwen3 Model*** using the ***vLLM ServingRuntime for KServe*** on ***NVIDIA GPU***. In addition to deploying the model, we will showcase a simple observability stack so that you can collect and visualize metrics related to AI model performance and GPU information.
 
 ## 3. Deploying Model on Red Hat OpenShift AI
 
 ### 3.1 Create a workspace
-Login to your openshift account. If you're in a workshop, click [here](https://rhods-dashboard-redhat-ods-applications.apps.cluster-t2mgg.t2mgg.sandbox2065.opentlc.com). Go to Data Science Projects and create a project.
+Login to your environment. If you're in a workshop, [follow the link to the portal from your host](). 
 
-  ![Image](../img/04/4.0.png)
+1. Go to Data Science Projects and create a project. This will be your workspace where you manage workbenches, models, pipelines, storage connections.
 
-### Use a pre-built modelcar container
-Using a pre-built container as a serving endpoint, we will deploy this modelcar container. This is the easiest way to get a LLM model running on Red Hat OpenShift AI.
+    ![Image](../img/04/4.0.png)
 
-1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog
+### Use a pre-built LLM container
+Using a pre-built modelcar container with LLM makes deployment faster. This is the easiest way to get a LLM model running on Red Hat OpenShift AI. Since the model is pre-packaged, it does not need to download from HuggingFace, you can deploy this in an air-gapped environment!
+
+1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog and explore the available models.
+![Image](../img/03/3.1.0.png)
 1. Select a containerized model you want to use. In this example, we will use qwen3-4b.
 
 1. Click the download/save button to reveal the tags, select any of the tag to reveal the URI.
-![Image](../img/03/3.1.3.png)
+![Image](../img/03/3.1.0-1.png)
+
+    ![Image](../img/03/3.1.3.png)
 1. Copy the URL from quay.io onwards.
 
 1. Next, deploy the model by navigating to the Models tab in your workspace on Red Hat Openshift AI. Go to the Models tab within your Data Science Project and select single-model serving:
 ![Image](../img/04/4.3.png)
 
 <!-- ***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step*** -->
-
   
-6. Fill in the details, ensure to choose nvidia gpu serving runtime and deployment mode to Standard.
+6. Fill in a name, ensure to choose nvidia gpu serving runtime and deployment mode to **Standard**.
 ![Image](../img/03/3.1.1.png)
+1. Remember to check the box to secure the LLM model endpoint that you are about to deploy.
+![Image](../img/03/3.1.1-2.png)
 1. Select connection type *URI - v1* and give it a name. A good practice is to name it the model you are about to deploy.
 1. Next, append the URI with oci://
 ![Image](../img/03/3.1.2.png)
@@ -54,12 +60,12 @@ Using a pre-built container as a serving endpoint, we will deploy this modelcar 
     oci://quay.io/redhat-ai-services/modelcar-catalog:qwen3-4b
     ```
 
->Note: If you face resource problems, try select a smaller model. For example qwen2.5-0.7b
+    >Note: If you face resource problems, try select a smaller model. For example qwen2.5-0.5b
+        ```
+        oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2.5-0.5b-instruct
+        ```
 
-    ```
-    oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2.5-0.5b-instruct
-    ```
-
+1. Your deployment will look something like this.
 
 - ***Model deployment name***: Name of the deployed model
 - ***Serving runtime***: vLLM NVIDIA GPU ServingRuntime for KServe
@@ -68,11 +74,11 @@ Using a pre-built container as a serving endpoint, we will deploy this modelcar 
 - ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
 - ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name.
 
-9. Wait for the model to finish deploy and the status turns green. 
+11. Wait for the model to finish deploy and the status turns green. 
     > Note: It may take up to a few minutes depending on model size.
 
     ![Image](../img/03/3.1.4.png)
-
+12. In production deployment, you might want to adjust the vllm parameter args to fit your use case, for example increase context length or apply certain quantization. Every use case is different and there is no silver bullet for a config that fits all. 
 
 ### 4. Query Model Inference Endpoint
 
@@ -99,7 +105,7 @@ curl -k -X GET https://url/v1/models -H "Authorization: Bearer YOUR_BEARER_TOKEN
 
 Running this command should return an output similar to the below output
 
->{"object":"list","data":[{"id":"qwen3-4b-quantizedw4a16","object":"model","created":1743010793,"owned_by":"vllm","root":"/mnt/models","parent":null,"max_model_len":4096,"permission":[{"id":"modelperm-09f199065a2846ec8bbfabea78f72349","object":"model_permission","created":1743010793,"allow_create_engine":false,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":false,"allow_view":true,"allow_fine_tuning":false,"organization":"*","group":null,"is_blocking":false}]}]}
+>{"object":"list","data":[{"id":"qwen3-4b","object":"model","created":1743010793,"owned_by":"vllm","root":"/mnt/models","parent":null,"max_model_len":4096,"permission":[{"id":"modelperm-09f199065a2846ec8bbfabea78f72349","object":"model_permission","created":1743010793,"allow_create_engine":false,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":false,"allow_view":true,"allow_fine_tuning":false,"organization":"*","group":null,"is_blocking":false}]}]}
 
 #### v1/completions
 
@@ -118,13 +124,13 @@ curl -k -X POST https://url/v1/completions \
 
 Running this command should return an output similar to the following:
 
-> {"id":"cmpl-40be2aa235c94f38a3b6161c6b93b59c","object":"text_completion","created":1743011184,"model":"qwen3-4b-quantizedw4a16","choices":[{"index":0,"text":" a company that provides software and services.","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":4,"total_tokens":11,"completion_tokens":7}}
+> {"id":"cmpl-40be2aa235c94f38a3b6161c6b93b59c","object":"text_completion","created":1743011184,"model":"qwen3-4b","choices":[{"index":0,"text":" a company that provides software and services.","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":4,"total_tokens":11,"completion_tokens":7}}
 
 You can see within "text" the completed response "Red Hat is a... a company that provides software and services."
 
 You can change the ***temperature*** of the query. The temperature essentially controls the "randomness" of the model's response. The lower the temperature the more deterministic the response, the higher the temperature the more random/unpredictable the response. So if you set the temperature to 0, it would always return the same output since there would be no randomness. 
 
-Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
+**Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.**
 
 ## 5. Deploy A Custom Workbench To Interact With The LLM
 
@@ -132,29 +138,34 @@ Congratulations! You have now successfully deployed a LLM model on Red Hat Opens
 AnythingLLM is a full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
 #### 5.1.1 AnythingLLM in Red Hat Openshift AI
-To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily.
+To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications as workbench easily. In your organization, you can BYO workbench as well!
   
-  >*Step 1 may already have been setup by your admin. If you are participating in a workshop, skip this and continue on to **step 2**.*
+  >**Step 1 may already have been setup by your admin. If you are participating in a workshop, skip this and continue on to **step 2**.**
 
-  1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/rh-aiservices-bu/anythingllm-workbench:1.7.5``` Copy the URL and paste it into Settings > Workbench Images > image location.
+  1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/rh-aiservices-bu/anythingllm-workbench:1.8.5``` Copy the URL and paste it into Settings > Workbench Images > image location.
 
       ![Image](../img/05/5.1.png)
 
-
-  1. Create a new workbench, pick the name of the workbench you have given in the previous step. If you are participating in a workshop and your admin have already set up for you, choose "AnythingLLM".
+  >**Step 2 : If you're a workshop participant, start here!**
+  2. Create a new workbench, pick the name of the workbench you have given in the previous step. If you are participating in a workshop and your admin have already set up for you, choose "AnythingLLM".
 
       ![Image](../img/05/5.2.png)
 
-      Remember to make your storage name unique to avoid name clash.
+      <!-- Remember to make your storage name unique to avoid name clash.
       
-      ![Image](../img/05/5.2.1.png)
+      ![Image](../img/05/5.2.1.png) -->
+    
+  1. Choose a small size container and skip the accelerator. You do not need a GPU for the application, a GPU is already assigned to your LLM model.
+
+     ![Image](../img/05/5.2.2.png)
 
   1. Wait for the workbench to start. You should see a green status showing it is running. Click on the name to navigate to AnythingLLM UI.
 
       ![Image](../img/05/5.3.png)
+  1. Click on the Anythingllm hyperlink to go to the workbench application that you have just deployed! 
 
 ### 5.2 Connecting AnythingLLM To Our Privately Hosted Model
-AnythingLLM is able to consume inference endpoints from multiple AI provider. In this exercise, we will connect it to our privately hosted LLM inference endpoints set up in previous steps.
+AnythingLLM is able to consume inference endpoints from multiple AI provider. In this exercise, we will configure it to connect to our privately hosted LLM inference endpoints set up in previous steps.
 
 1. Select OpenAI Compatible API
 
@@ -162,19 +173,33 @@ AnythingLLM is able to consume inference endpoints from multiple AI provider. In
 
 1. Paste the baseURL from your deployed model(external endpoint) and append **/v1** on it. It will look like this example
 
-    ```https://qwen3-4b-quantizedw4a16-cbtham-demo-llm.apps.cluster-q2cbm.q2cbm.sandbox1007.opentlc.com/v1```
+    ```https://qwen3-4b.apps.cluster-q2cbm.q2cbm.sandbox1007.opentlc.com/v1```
+
+    >**Note: Use your url. The above is an example.**
 
 1. Paste the token copied from above steps as the API key. The token starts with ey....
 
     ![Image](../img/05/5.5.png)
 
-1. Use the name of the model you deployed. In this example, I use qwen3-4b-quantizedw4a16 as the name of the model. You may key in the name of your model that you want to use. You can refer the model name from the deployed model URL at Red Hat OpenShift AI models tab.
+1. Use the name of the model you deployed. In this example, I use qwen3-4b as the name of the model. You may key in the name of your model that you want to use. You can refer the model name from the deployed model URL at Red Hat OpenShift AI models tab.
 
 1. Set the context window and max token to 4096.
 
-1. Once it is saved, navigate back to the main page of AnythingLLM and start a chat. If everything is set up properly, you will be greeted with a response from the LLM.
+1. Choose use this for "Just me." and skip password since it is a demo in the next steps. You can skip through the settings that ask for database setup and survey. Give a name to your workspace. 
+
+    ![Image](../img/05/5.6-2.png)
+
+1. When you are done, you will see AnythingLLM main page.
+
+    ![Image](../img/05/5.6-3.png)
+
+1. Navigate to workspace or select "send a chat" to start. If everything is set up properly, you will be greeted with a response from the LLM that you just deployed!
 
     ![Image](../img/05/5.6.png)
+
+    **You are now an AI engineering expert!**
+
+    In production there are more to it. Things like managing the LLM endpoint lifecycle, logs, versioning, automating CICD deployment and even giving a guardrail are extremely important. Red Hat Openshift AI is your one stop platform to implement all these.
 
 ### 5.3 Retrieval Augmented Generation with AnythingLLM 
 RAG, or Retrieval-Augmented Generation, is an AI framework that combines the strengths of traditional information retrieval systems with generative large language models (LLMs). It allows LLMs to access and reference information outside their training data to provide more accurate, up-to-date, and relevant responses. Essentially, RAG enhances LLMs by enabling them to tap into external knowledge sources, like documents, databases, or even the internet, before generating text.
@@ -193,28 +218,33 @@ You may insert your own pdf, csv or any digestible format for RAG. In this guide
    We can see the response is short and very generic.
 
 #### Option 1 : Upload your own data (PDF)
-2. Now lets implement RAG by attaching a pdf. Click on the upload button beside your user workspace. Upload the pdf rag-demo.pdf in this repository.
+2. Now lets implement RAG by attaching a pdf ([demo-rag.pdf](../rag-demo.pdf)). Click on the upload button beside your user workspace.
+    ![Image](../img/05/5.7.1-2.png)
+3. Upload the pdf rag-demo.pdf.
     ![Image](../img/05/5.7.1.png)
-3. After that, move it to the workspace and click Save and Embed.
+4. After that, move it to the workspace and click Save and Embed.
     ![Image](../img/05/5.7.2.png)
-4. We can see the answer after RAG is more detailed with reference to the data we uploaded.
+5. We can see the answer after RAG is more detailed with reference to the data we uploaded.
     ![Image](../img/05/5.7.3.png)
+    >Note: You can verify this by expanding the show citation.
 
 #### Option 2 : Scrapping a website
 
-5. Now let's try another way to implement RAG by scraping a website. The website has a section which has a better answer to our previous question.
-6. Instead of uploading a document, select Data Connector and click bulk link scraper.
+6. Now let's try another way to implement RAG by scraping a website. The website has a section which has a better answer to our previous question.
+7. Instead of uploading a document, select Data Connector and click bulk link scraper.
     ![Image](../img/05/5.8.png)
-7. Input the link, set the depth to 1 and click Submit.
-   > https://www.redhat.com/en/resources/openshift-ai-overview
-8. Web scraping will take some time especially with the depth set to a higher value. If you are an admin, you can navigate to the anythingllm pod and see the process of scraping, chunking and embedding.
-9. Once this step is done, you will see the data available. Move it to the workspace, save and embed.
+8. Input the link, set the depth to 1 and click Submit.
+   > https://www.redhat.com/en/about/press-releases/red-hat-optimizes-red-hat-ai-speed-enterprise-ai-deployments-across-models-ai-accelerators-and-clouds
+9. Web scraping will take some time especially with the depth set to a higher value. If you are an admin, you can navigate to the anythingllm pod and see the process of scraping, chunking and embedding.
+10. Once this step is done, you will see the data available. Move it to the workspace, save and embed.
     ![Image](../img/05/5.7.4.png)
-10. After that, ask a question and you can see the answer is much more detailed and with reference to the scraped website.
+11. After that, ask the question ***What is Red Hat's AI vision?***
+and you can see the answer is much more detailed and with reference to the scraped website compared to when you have not provide it a data source.
 
-11. Behind the scenes, AnythingLLM scraped the website, chunked it and embedded it into the workspace. This view is only available as admin.
+12. Behind the scenes, AnythingLLM scraped the website, chunked it and embedded it into the workspace. This view is only available as admin.
     ![Image](../img/05/5.7.5.png)
 
+13. In your organization, you can extend this to scrape internal knowledge bases, git repository, configuration playbooks for exaple
 ## 6. Setting up Observability Stack & Collecting Metrics
 
 The following section requires you run code in a Terminal. You can run this directly on Red Hat Openshift console or run this through your local terminal connected to the openshift cluster. When you are ready, git clone this repository.
