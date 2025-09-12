@@ -16,7 +16,7 @@
 ### Prerequisites for environment 
 
 An OpenShift cluster that have OpenShift AI with Nvidia GPU. 
-- For Red Hatters, provision a demo environment from the demo catalog. 
+- For Red Hatters, provision a demo environment from the demo catalog, ie. RHOAI on OCP on AWS with NVIDIA GPUs. 
 - For attendees, this is already setup for you.
 
 ## Purpose
