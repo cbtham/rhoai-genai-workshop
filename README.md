@@ -434,7 +434,7 @@ Go to Dashboards -> Create Dashboard
 
 ![Image](img/06/5.6.png)
 
-Select Import a dashboard. Then either upload the <a href="https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json" target="_blank">vLLM dashboard yaml</a> or just copy and paste the yaml into the box provided.
+Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json){:target="_blank"}  or just copy and paste the yaml into the box provided.
 
 ![Image](img/06/5.7.png)
 
