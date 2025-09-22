@@ -797,8 +797,7 @@
     "llm",
     "vllm",
     "performance",
-    "inference",
-    "llm-d"
+    "inference"
   ],
   "templating": {
     "list": [
@@ -836,8 +835,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "LLM-D Performance Dashboard",
-  "uid": "llm-performance",
-  "version": 2,
+  "title": "vLLM Advanced Performance Dashboard",
+  "uid": "vllm-advanced-performance",
+  "version": 2.1,
   "weekStart": ""
 }

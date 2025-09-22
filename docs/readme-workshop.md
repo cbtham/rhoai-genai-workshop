@@ -35,7 +35,7 @@ Login to your environment. If you're in a workshop, [follow the link to the port
 ### Use a pre-built LLM container
 Using a pre-built modelcar container with LLM makes deployment faster. This is the easiest way to get a LLM model running on Red Hat OpenShift AI. Since the model is pre-packaged, it does not need to download from HuggingFace, you can deploy this in an air-gapped environment!
 
-1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog and explore the available models.
+1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog{target=_blank} and explore the available models.
 ![Image](../img/03/3.1.0.png)
 1. Select a containerized model you want to use. In this example, we will use qwen3-4b.
 
@@ -366,11 +366,18 @@ Go to Dashboards -> Create Dashboard
 
 ![Image](../img/06/5.6.png)
 
-Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json) or just copy and paste the yaml into the box provided.
+Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json{target=_blank}) or just copy and paste the yaml into the box provided.
 
 ![Image](../img/06/5.7.png)
 
 Then hit load, then Import.
+
+#### Optional: vLLM Advanced Performance Dashboard
+This dashboard is meant to provide high level metrices - key to assist in setting SLO, monitoring and improving performance.
+
+To add this, select Import a dashboard. Then copy and paste the content of [vLLM Advanced Performance Dashboard yaml](../obs/grafana-dashboard-llm-performance.json{target=_blank}) to import.
+
+
 
 
 ### 6.4 Importing DCGM Dashboard
