@@ -372,7 +372,7 @@ Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://
 
 Then hit load, then Import.
 
-#### Optional: vLLM Advanced Performance Dashboard
+### Optional: vLLM Advanced Performance Dashboard
 This dashboard is meant to provide high level metrices - key to assist in setting SLO, monitoring and improving performance.
 
 To add this, select Import a dashboard. Then copy and paste the content of [vLLM Advanced Performance Dashboard yaml](../obs/grafana-dashboard-llm-performance.json) to import.
