@@ -561,10 +561,10 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
 4. Open a new tab in your browser and visit the URL to access the playground UI.
 </br>
 </br>
+    > Your MCP server currently can only access it's own namespace. </br>
     > To implement cluster wide read-only acccess, apply the following:
 
     ```shell
-    # Optional: Deploy cluster-wide read permissions for MCP server
     oc apply -f obs/experimental/openshift-mcp/cluster-read-serviceaccount.yaml
     ```
 
