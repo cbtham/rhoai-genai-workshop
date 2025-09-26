@@ -490,6 +490,7 @@ Llama Stack configuration defines various components like models, RAG providers,
 1. Next we will deploy an mcp server. The MCP server can be any thing from Spotify, Uber to Datadog, GitHub. You may also build your own MCP server as well. In this example, we will deploy an Openshift MCP server.
 
     ```shell
+    oc new-project llama-stack
     oc apply -k obs/experimental/openshift-mcp -n llama-stack
     ```
 
@@ -502,7 +503,7 @@ Llama Stack configuration defines various components like models, RAG providers,
     export MODEL_NAMESPACE="admin-workshop" # Your datascience project name
     ```
     ```shell
-    export MODEL_TOKEN="YOUR_TOKEN" # Your LLM Model token
+    export LLM_MODEL_TOKEN="YOUR_TOKEN" # Your LLM Model token
     ```
     ```shell
     export LLM_MODEL_URL="https://${MODEL_NAME}-predictor.${MODEL_NAMESPACE}.svc.cluster.local:8443/v1"
@@ -511,15 +512,21 @@ Llama Stack configuration defines various components like models, RAG providers,
     After that, run
 
     ```shell
-    envsubst < obs/experimental/llama-stack-with-config/configmap.yaml | oc apply -f - -n llama-stack
+    perl -pe 's/\$\{([^}]+)\}/$ENV{$1}/g' obs/experimental/llama-stack-with-config/configmap.yaml | oc apply -f - -n llama-stack
     ```
     and 
     ```shell
-    envsubst < obs/experimental/llama-stack-with-config/llama-stack-with-config.yaml | oc apply -f - -n llama-stack
+    perl -pe 's/\$\{([^}]+)\}/$ENV{$1}/g' obs/experimental/llama-stack-with-config/llama-stack-with-config.yaml | oc apply -f - -n llama-stack
     ```
-1. Ensure that no errors and all the pods are running.
+    >The first command deploys configmap, the second command deploys the server.
+
+1. Ensure that no errors from llama-stack and mcp server.
     ```shell
     oc get pods -n llama-stack
+    ```
+    and
+    ```shell 
+    oc get pods -n llama-stack-k8s-operator-controller-manager
     ```
 
 ### 7.1 Giving your LLM the power to call tools and use MCP
