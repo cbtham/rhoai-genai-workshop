@@ -544,6 +544,15 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
 
 ### 7.2 Test and interact with your LLM model with tool call capability
 
+#### Option 1: AnythingLLM
+
+Change context to 32768
+
+oc cp obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json admin-workshop/anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
+
+oc delete pod anythingllm-0 -n admin-workshop
+
+
 1. Deploy llama-stack playground. The playground is a streamlit based UI to test the LLM model with options to enable capabilities on demand. 
 
     ```shell
