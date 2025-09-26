@@ -1,0 +1,13 @@
+---
+resources:
+  - crd.yaml
+  - namespace.yaml
+  - rbac.yaml
+  - cluster-rbac.yaml
+  - serviceaccount.yaml
+  - service.yaml
+  - configmap.yaml
+  - deployment.yaml
+
+commonAnnotations:
+  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

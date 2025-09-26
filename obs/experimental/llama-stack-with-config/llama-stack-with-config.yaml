@@ -1,0 +1,23 @@
+apiVersion: llamastack.io/v1alpha1
+kind: LlamaStackDistribution
+metadata:
+  name: llamastack
+spec:
+  replicas: 1
+  server:
+    containerSpec:
+      env:
+        - name: MODEL_NAME
+          value: "${MODEL_NAME}"
+        - name: MODEL_NAMESPACE
+          value: "${MODEL_NAMESPACE}"
+        - name: LLM_MODEL_URL
+          value: "http://${MODEL_NAME}-predictor.${MODEL_NAMESPACE}.svc.cluster.local:8443/v1"
+        - name: LLM_MODEL_TOKEN
+          value: "default-name"
+      name: llama-stack
+      port: 8321
+    distribution:
+      name: remote-vllm
+    userConfig:
+      configMapName: llama-stack-config

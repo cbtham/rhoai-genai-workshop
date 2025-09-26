@@ -1,9 +1,0 @@
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: observability-metrics-custom-allowlist
-  namespace: llm-d-monitoring
-data:
-  uwl_metrics_list.yaml: |
-    matches:
-      - __name__=~"(vllm:.*)"

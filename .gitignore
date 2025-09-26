@@ -24,3 +24,5 @@ Thumbs.db
 # Backup files
 *.bak
 *.backup
+
+creds.md

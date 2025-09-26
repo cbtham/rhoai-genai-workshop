@@ -1,0 +1,6 @@
+---
+resources:
+  - configmap.yaml
+  - llama-stack-with-config.yaml
+
+namespace: llama-stack

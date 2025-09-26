@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: grafana-prometheus-token
-  namespace: openshift-monitoring
-  annotations:
-    kubernetes.io/service-account.name: prometheus-k8s
-type: kubernetes.io/service-account-token

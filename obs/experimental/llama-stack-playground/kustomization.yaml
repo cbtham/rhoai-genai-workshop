@@ -1,0 +1,8 @@
+---
+resources:
+  - serviceaccount.yaml
+  - service.yaml
+  - deployment.yaml
+  - route.yaml
+
+namespace: llama-stack
