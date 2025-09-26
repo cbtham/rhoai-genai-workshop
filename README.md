@@ -559,8 +559,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     oc get route llama-stack-playground -n llama-stack -o jsonpath='https://{.spec.host}{"\n"}'
     ```
 4. Open a new tab in your browser and visit the URL to access the playground UI.
-</br>
-</br>
+
     > Your MCP server currently can only access it's own namespace. </br>
     > To implement cluster wide read-only acccess, apply the following:
 
