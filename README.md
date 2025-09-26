@@ -544,14 +544,22 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
 
 ### 7.2 Test and interact with your LLM model with tool call capability
 
-#### Option 1: AnythingLLM
+#### AnythingLLM
 
-Change context to 32768
+1. Change context to 8192 as tool calling to MCP will consume a lot more token.
 
-oc cp obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json admin-workshop/anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
+1. Add the configuration to the successfully deployed MCP server
 
-oc delete pod anythingllm-0 -n admin-workshop
+    ```shell
+    oc cp obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json admin-workshop/anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
+    ```
+1. Restart/Refresh AnythingLLM
 
+    ```shell
+    oc rollout restart statefulset anythingllm -n admin-workshop
+    ```
+
+#### Optional : Deploy Llama-stack Playground To Test MCP
 
 1. Deploy llama-stack playground. The playground is a streamlit based UI to test the LLM model with options to enable capabilities on demand. 
 
@@ -569,12 +577,13 @@ oc delete pod anythingllm-0 -n admin-workshop
     ```
 4. Open a new tab in your browser and visit the URL to access the playground UI.
 
-    > Your MCP server currently can only access it's own namespace. </br>
-    > To implement cluster wide read-only acccess, apply the following:
 
-    ```shell
-    oc apply -f obs/experimental/openshift-mcp/cluster-read-serviceaccount.yaml
-    ```
+> Your MCP server currently can only access it's own namespace. </br>
+> To implement cluster wide read-only acccess, apply the following:
+
+```shell
+oc apply -f obs/experimental/openshift-mcp/cluster-read-serviceaccount.yaml
+```
 
 ## Knowledge Base
 ### Model pod automatically terminated (Workaround)
