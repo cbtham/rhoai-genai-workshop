@@ -466,26 +466,40 @@ Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, us
 
 ## 7.0 Agentic AI & MCP Server
 
-The following section deploys llama-stack, an open-sourced framework by Meta for building agentic AI. 
+Prerequisite: The following section requires you to use Terminal or CLI commands. We will deploy llama-stack, an open-sourced developer framework and library by Meta for building agentic AI. 
 
+1. Go to your OpenShift AI cluster and select the app icon to go to console. 
+
+    ![Image](img/07/7.0.1.png)
+1. From the console, click the CLI icon and start a terminal session.
+    ![Image](img/07/7.0.2.png)
+1. Git clone this repository
+    ![Image](img/07/7.0.3.png)
+    ```shell
+    git clone https://github.com/cbtham/rhoai-genai-workshop.git && cd rhoai-genai-workshop
+    ```
+1. Now, let's proceed on.
+
+### 7.1 Deploying Llama Stack and MCP Server
 Llama Stack is a developer framework for building generative AI applications — are set up and connected to create a production-ready environment across various environments like on-prem, air-gapped or the cloud.
 
 We will need a few components:-
 
 - **Llama-stack Kubernetes Operator** <br>
-We will be using [llama-stack-k8s-operator](ttps://github.com/llamastack/llama-stack-k8s-operator). This operator will orchestrate and automate Llama Stack deployment(servers, resource management, deployment in underlying clsuter).
-
-- **An MCP server** <br>
-Model Context Protocol, MCP is an open standard for AI agents and LLMs to connect with external data sources, tools, and services. Like USB-C port for AI, it standardizes communication, allowing LLM-powered agents to access real-world information and functionality beyond their training data.
+We will be using [llama-stack-k8s-operator](https://github.com/llamastack/llama-stack-k8s-operator). This operator will orchestrate and automate Llama Stack deployment(servers, resource management, deployment in underlying clsuter).
 
 - **Llama-stack configuration** <br>
 Llama Stack configuration defines various components like models, RAG providers, inference engines, and other tools are used to build and deploy the AI application. Llama Stack also provides a unified API layer, allowing developers to switch providers for different components without changing core application code.
+
+- **An MCP server** <br>
+Model Context Protocol, MCP is an open standard for AI agents and LLMs to connect with external data sources, tools, and services. Like USB-C port for AI, it standardizes communication, allowing LLM-powered agents to access real-world information and functionality beyond their training data.
 
 1. To deploy llama-stack-operator, run 
 
     ```shell
     oc apply -k obs/experimental/llama-stack-operator
     ```
+    ![Image](img/07/7.0.4.png)
 
 1. Next we will deploy an mcp server. The MCP server can be any thing from Spotify, Uber to Datadog, GitHub. You may also build your own MCP server as well. In this example, we will deploy an Openshift MCP server.
 
@@ -493,6 +507,7 @@ Llama Stack configuration defines various components like models, RAG providers,
     oc new-project llama-stack
     oc apply -k obs/experimental/openshift-mcp -n llama-stack
     ```
+    ![Image](img/07/7.0.5.png)
 
 1. To utilize llama-stack, we will configure it with llama-stack configuration deployment. For this step, you will need to provide details from earlier steps:
 
@@ -508,6 +523,7 @@ Llama Stack configuration defines various components like models, RAG providers,
     ```shell
     export LLM_MODEL_URL="https://${MODEL_NAME}-predictor.${MODEL_NAMESPACE}.svc.cluster.local:8443/v1"
     ```
+    ![Image](img/07/7.0.6.png)
 
     After that, run
 
