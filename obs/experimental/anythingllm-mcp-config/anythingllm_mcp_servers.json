@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "openshift-mcp": {
-      "url": "http://ocp-mcp-server.llama-stack.svc.cluster.local:8000/sse",
+      "url": "http://ocp-mcp-server.${MODEL_NAMESPACE}.svc.cluster.local:8000/sse",
       "type": "sse",
       "headers": {
         "Accept": "text/event-stream"

@@ -27,3 +27,4 @@ Thumbs.db
 
 creds.md
 obs/experimental/llama-stack-user-deployment/README.md
+obs/experimental/openshift-mcp/setup-workshop-permissions.sh

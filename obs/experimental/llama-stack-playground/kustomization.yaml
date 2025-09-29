@@ -5,4 +5,4 @@ resources:
   - deployment.yaml
   - route.yaml
 
-namespace: llama-stack
+# Namespace not specified - deploy with: oc apply -k obs/experimental/llama-stack-playground -n <your-namespace>

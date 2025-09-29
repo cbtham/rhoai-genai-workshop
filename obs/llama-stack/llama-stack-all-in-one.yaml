@@ -1,0 +1,87 @@
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-stack
+  labels:
+    app: llama-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llama-stack
+  template:
+    metadata:
+      labels:
+        app: llama-stack
+    spec:
+      containers:
+      - name: llama-stack
+        image: llamastack/distribution-remote-vllm:latest
+        command:
+        - python
+        - -m
+        - llama_stack.distribution.server.server
+        args:
+        - --config
+        - /etc/llama-stack/run.yaml
+        ports:
+        - containerPort: 8321
+          name: http
+          protocol: TCP
+        env:
+        - name: LLAMA_STACK_PORT
+          value: "8321"
+        - name: HOME
+          value: "/tmp"
+        volumeMounts:
+        - name: config
+          mountPath: /etc/llama-stack/
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+      volumes:
+      - name: config
+        configMap:
+          name: llama-stack-config
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-stack
+  labels:
+    app: llama-stack
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8321
+    targetPort: 8321
+    protocol: TCP
+    name: http
+  selector:
+    app: llama-stack
+---
+# Route
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: llama-stack
+  labels:
+    app: llama-stack
+spec:
+  port:
+    targetPort: http
+  to:
+    kind: Service
+    name: llama-stack
+    weight: 100
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

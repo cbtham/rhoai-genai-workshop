@@ -1,0 +1,69 @@
+---
+# ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ocp-mcp
+  labels:
+    app: ocp-mcp-server
+---
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ocp-mcp
+  labels:
+    app: ocp-mcp-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
+subjects:
+- kind: ServiceAccount
+  name: ocp-mcp
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocp-mcp-server
+  labels:
+    app: ocp-mcp-server
+spec:
+  selector:
+    matchLabels:
+      app: ocp-mcp-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ocp-mcp-server
+        deployment: ocp-mcp-server
+    spec:
+      serviceAccountName: ocp-mcp
+      containers:
+      - name: ocp-mcp-server
+        image: quay.io/hveeradh/ocp-mcp-server:latest
+        ports:
+          - name: http
+            containerPort: 8000
+            protocol: TCP
+        command: ["./kubernetes-mcp-server"]
+        args: ["--sse-port", "8000"]
+        resources: {}
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: ocp-mcp-server
+  labels:
+    app: ocp-mcp-server
+spec:
+  selector:
+    app: ocp-mcp-server
+    deployment: ocp-mcp-server
+  ports:
+  - port: 8000
+    targetPort: http
+    protocol: TCP

@@ -33,6 +33,8 @@ spec:
           value: "${LLM_MODEL_TOKEN}"
         - name: LLAMA_STACK_CONFIG
           value: "/app/config/run.yaml"
+        - name: LLAMA_STACK_PORT
+          value: "8321"
         volumeMounts:
         - name: config
           mountPath: /app/config

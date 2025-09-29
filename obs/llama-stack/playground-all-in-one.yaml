@@ -1,3 +1,14 @@
+---
+# ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: llama-stack-playground
+  labels:
+    app.kubernetes.io/name: llama-stack-playground
+    app.kubernetes.io/version: "latest"
+---
+# Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,6 +28,7 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+      serviceAccountName: llama-stack-playground
       containers:
         - name: llama-stack-playground
           securityContext:
@@ -65,3 +77,40 @@ spec:
             requests:
               cpu: 500m
               memory: 512Mi
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-stack-playground
+  labels:
+    app.kubernetes.io/name: llama-stack-playground
+    app.kubernetes.io/version: "latest"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: llama-stack-playground
+---
+# Route
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: llama-stack-playground
+  labels:
+    app.kubernetes.io/name: llama-stack-playground
+    app.kubernetes.io/version: "latest"
+spec:
+  to:
+    kind: Service
+    name: llama-stack-playground
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

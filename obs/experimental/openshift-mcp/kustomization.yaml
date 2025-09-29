@@ -6,4 +6,5 @@ resources:
   - openshift-service.yaml
   - openshift-serviceaccount.yaml
 
-namespace: llama-stack
+# Namespace is not specified here - will use the namespace from -n flag
+# Deploy with: oc apply -k obs/experimental/openshift-mcp -n <your-namespace>
