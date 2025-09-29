@@ -563,14 +563,19 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
 
 #### AnythingLLM
 
-1. Change context to 8192 as tool calling to MCP will consume a lot more token.
+1. Go to AnythingLLM settings
+    ![Image](/img/07/7.2.7.png)
+1. Go to AI Providers > LLM and change the context length to 8192 as tool calling to MCP will consume a lot more token.
     ![Image](img/07/7.0.8.png)
 
-1. Add the configuration to the successfully deployed MCP server
-    > Change the admin-workshop to your namespace!
+1. Add the configuration of the OpenShift MCP server
+    > Change the YOUR-PROJECT-NAMESPACE to your namespace!
 
     ```shell
-    oc cp obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json admin-workshop/anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
+    export MODEL_NAMESPACE="YOUR-PROJECT-NAMESPACE"
+    ```
+    ```shell
+    perl -pe 's/\$\{([^}]+)\}/$ENV{$1}/g' obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json > /tmp/anythingllm_mcp_servers.json && oc cp /tmp/anythingllm_mcp_servers.json anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
     ```
 1. Restart/Refresh AnythingLLM.
 1. Go to Agent skills, scroll down to MCP servers and hit refresh.
