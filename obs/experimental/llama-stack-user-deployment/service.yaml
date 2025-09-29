@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-stack
+  labels:
+    app: llama-stack
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8321
+    targetPort: 8321
+    protocol: TCP
+    name: http
+  selector:
+    app: llama-stack

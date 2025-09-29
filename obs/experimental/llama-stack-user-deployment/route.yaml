@@ -1,0 +1,18 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: llama-stack
+  labels:
+    app: llama-stack
+spec:
+  port:
+    targetPort: http
+  to:
+    kind: Service
+    name: llama-stack
+    weight: 100
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-stack
+  labels:
+    app: llama-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llama-stack
+  template:
+    metadata:
+      labels:
+        app: llama-stack
+    spec:
+      containers:
+      - name: llama-stack
+        image: llamastack/distribution-remote-vllm:0.1.0
+        ports:
+        - containerPort: 8321
+          name: http
+          protocol: TCP
+        env:
+        - name: MODEL_NAME
+          value: "${MODEL_NAME}"
+        - name: MODEL_NAMESPACE  
+          value: "${MODEL_NAMESPACE}"
+        - name: LLM_MODEL_URL
+          value: "http://${MODEL_NAME}-predictor.${MODEL_NAMESPACE}.svc.cluster.local:8443/v1"
+        - name: LLM_MODEL_TOKEN
+          value: "${LLM_MODEL_TOKEN}"
+        - name: LLAMA_STACK_CONFIG
+          value: "/app/config/run.yaml"
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+      volumes:
+      - name: config
+        configMap:
+          name: llama-stack-config
