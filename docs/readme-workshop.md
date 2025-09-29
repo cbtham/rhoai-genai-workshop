@@ -394,6 +394,156 @@ Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, us
 
 ![Image](../img/06/5.10.png)
 
+## 7.0 Agentic AI & MCP Server
+
+Prerequisite: The following section requires you to use Terminal or CLI commands. We will deploy llama-stack, an open-sourced developer framework and library by Meta for building agentic AI. 
+
+1. Go to your OpenShift AI cluster and select the app icon to go to console. 
+
+    ![Image](../img/07/7.0.1.png)
+1. From the console, click the CLI icon and start a terminal session.
+    ![Image](../img/07/7.0.2.png)
+1. Git clone this repository
+    ![Image](../img/07/7.0.3.png)
+    ```shell
+    git clone https://github.com/cbtham/rhoai-genai-workshop.git && cd rhoai-genai-workshop
+    ```
+1. Now, let's proceed on.
+
+### 7.1 Deploying Llama Stack and MCP Server
+Llama Stack is a developer framework for building generative AI applications — are set up and connected to create a production-ready environment across various environments like on-prem, air-gapped or the cloud.
+
+We will need a few components:-
+
+- **Llama-stack Kubernetes Server Operator** <br>
+We will be using [llama-stack-k8s-operator](https://github.com/llamastack/llama-stack-k8s-operator). This server operator will orchestrate and automate Llama Stack deployment(servers, resource management, deployment in underlying clsuter).
+
+- **Llama-stack configuration** <br>
+Llama Stack configuration, configmap.yaml defines various components like models, RAG providers, inference engines, and other tools are used to build and deploy the AI application. Llama Stack also provides a unified API layer, allowing developers to switch providers for different components without changing core application code.
+
+- **An MCP server** <br>
+Model Context Protocol, MCP is an open standard for AI agents and LLMs to connect with external data sources, tools, and services. Like USB-C port for AI, it standardizes communication, allowing LLM-powered agents to access real-world information and functionality beyond their training data.
+
+1. To deploy llama-stack-operator, run 
+
+    ```shell
+    oc apply -k obs/experimental/llama-stack-operator
+    ```
+    ![Image](../img/07/7.0.4.png)
+
+1. Next we will deploy an mcp server. The MCP server can be any thing from Spotify, Uber to Datadog, GitHub. You may also build your own MCP server as well. In this example, we will deploy an Openshift MCP server.
+
+    ```shell
+    oc new-project llama-stack
+    oc apply -k obs/experimental/openshift-mcp -n llama-stack
+    ```
+    ![Image](img/07/7.0.5.png)
+
+1. To utilize llama-stack, we will configure it with llama-stack configuration deployment. For this step, you will need to provide details from earlier steps:
+
+    ```shell
+    export MODEL_NAME="qwen3-4b" # Your LLM Model
+    ```
+    ```shell
+    export MODEL_NAMESPACE="admin-workshop" # Your datascience project name
+    ```
+    ```shell
+    export LLM_MODEL_TOKEN="YOUR_TOKEN" # Your LLM Model token
+    ```
+    ```shell
+    export LLM_MODEL_URL="https://${MODEL_NAME}-predictor.${MODEL_NAMESPACE}.svc.cluster.local:8443/v1"
+    ```
+    ![Image](img/07/7.0.6.png)
+
+    After that, run
+
+    ```shell
+    perl -pe 's/\$\{([^}]+)\}/$ENV{$1}/g' obs/experimental/llama-stack-with-config/configmap.yaml | oc apply -f - -n llama-stack
+    ```
+    and 
+    ```shell
+    perl -pe 's/\$\{([^}]+)\}/$ENV{$1}/g' obs/experimental/llama-stack-with-config/llama-stack-with-config.yaml | oc apply -f - -n llama-stack
+    ```
+    >The first command deploys configmap, the second command deploys the server.
+
+1. Ensure that no errors from llama-stack and mcp server.
+    ```shell
+    oc get pods -n llama-stack
+    ```
+    and
+    ```shell 
+    oc get pods -n llama-stack-k8s-operator-controller-manager
+    ```
+
+### 7.1 Giving your LLM the power to call tools and use MCP
+To do this, we will need to go back to OpenShift AI portal. We will need to modify the deployment.
+1. In your datascience project **Models** tab, select the LLM that you have deployed and choose edit. 
+1. Scroll down to vLLM arguments. We will need to enable a few flags to allow tool calling.
+
+    ```
+    --enable-auto-tool-choice
+    --tool-call-parser hermes
+    ```
+    >Note: Qwen3 models use hermes parser. If you are using other LLM models, you may need to modify the parser. Check the foundation model provider docs for more information.
+
+    ![Image](img/07/7.0.7.png)
+1. When the LLM model finish re-deploy, we will be able to test.
+
+### 7.2 Test and interact with your LLM model with tool call capability
+
+#### AnythingLLM
+
+1. Change context to 8192 as tool calling to MCP will consume a lot more token.
+    ![Image](img/07/7.0.8.png)
+
+1. Add the configuration to the successfully deployed MCP server
+    > Change the admin-workshop to your namespace!
+
+    ```shell
+    oc cp obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json admin-workshop/anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
+    ```
+1. Restart/Refresh AnythingLLM.
+1. Go to Agent skills, scroll down to MCP servers and hit refresh.
+    ![Image](img/07/7.0.9.png)
+1. After that you will be able to see the Openshift MCP Server.
+    ![Image](img/07/7.0.10.png)
+1. To test, go to chat or agent chat. Ensure to type in @agent before your question.
+    ![Image](img/07/7.0.11.png)
+    ![Image](img/07/7.0.12.png)
+
+
+> Your MCP server currently can only access it's own namespace. </br>
+> To implement cluster wide read-only acccess, apply the following:
+
+```shell
+oc apply -f obs/experimental/openshift-mcp/cluster-read-serviceaccount.yaml
+```
+
+#### OPTIONAL: Deploy Llama-stack Playground To Test MCP
+In any organization, you may have developers that would like to build and try on other tools, library or frameworks. The section below showcases llama-stack playground, which have a more robust debugging and logging interfaces. 
+
+To deploy llama-stack playground, follow on. The playground is a streamlit based UI to test the LLM model with options to enable capabilities on demand.
+
+1. In your openshift terminal CLI, run 
+    ```shell
+    oc apply -k obs/experimental/llama-stack-playground -n llama-stack
+    ```
+1. Ensure that no errors and all the pods are running.
+    ```shell
+    oc get pods -n llama-stack
+    ```
+1. Next we will get the route URL to the playground UI.
+
+    ```
+    oc get route llama-stack-playground -n llama-stack -o jsonpath='https://{.spec.host}{"\n"}'
+    ```
+4. Open a new tab in your browser and visit the URL to access the playground UI.
+</br></br>Ensure to select **agent-based** and **openshift MCP** on the right panel.
+    ![Image](img/07/7.2.1.png)
+
+    Ask *How many pods are there in llama-stack namespace?*
+        ![Image](img/07/7.2.2.png)
+
 ## Knowledge Base
 ### Model pod automatically terminated (Workaround)
 
