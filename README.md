@@ -576,12 +576,23 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ![Image](img/07/7.0.9.png)
 1. After that you will be able to see the Openshift MCP Server.
     ![Image](img/07/7.0.10.png)
-1. To test, go to chat or agent chat. Ensure use @agent.
+1. To test, go to chat or agent chat. Ensure to type in @agent before your question.
+    ![Image](img/07/7.0.11.png)
 
-#### Optional : Deploy Llama-stack Playground To Test MCP
 
-1. Deploy llama-stack playground. The playground is a streamlit based UI to test the LLM model with options to enable capabilities on demand. 
+> Your MCP server currently can only access it's own namespace. </br>
+> To implement cluster wide read-only acccess, apply the following:
 
+```shell
+oc apply -f obs/experimental/openshift-mcp/cluster-read-serviceaccount.yaml
+```
+
+#### OPTIONAL: Deploy Llama-stack Playground To Test MCP
+In any organization, you may have developers that would like to build and try on other tools, library or frameworks. The section below showcases llama-stack playground, which have a more robust debugging and logging interfaces. 
+
+To deploy llama-stack playground, follow on. The playground is a streamlit based UI to test the LLM model with options to enable capabilities on demand.
+
+1. In your openshift terminal CLI, run 
     ```shell
     oc apply -k obs/experimental/llama-stack-playground -n llama-stack
     ```
@@ -595,17 +606,11 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     oc get route llama-stack-playground -n llama-stack -o jsonpath='https://{.spec.host}{"\n"}'
     ```
 4. Open a new tab in your browser and visit the URL to access the playground UI.
+    ![Image](img/07/7.2.1.png)
 
-
-> Your MCP server currently can only access it's own namespace. </br>
-> To implement cluster wide read-only acccess, apply the following:
-
-```shell
-oc apply -f obs/experimental/openshift-mcp/cluster-read-serviceaccount.yaml
-```
 
 ## Knowledge Base
-### Model pod automatically terminated (Workaround)
+### 1. Model pod automatically terminated (Workaround)
 
 Post deploying your model, after some time the pod for the model may terminate. You have to manually go into the console and spin it back up to 1. After this, the model should not terminate again and the model pod should successfully be created. This is a current bug that is caused by large models being deployed. We believe the issue may be caused because the model is of a size that it takes a while to get it in place on the node or into the cluster that it isn't given a proper enough amount of breathing room to actually allow it to start up. This bug is currently in the backlog of things to fix. So for now with bigger models like granite, you will have to manually spin the pod back up.
 
@@ -626,7 +631,7 @@ oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sand
 After this it will take some time for the model pod to spin back up.
 
 
-### If AnythingLLM refresh button fails, run this command to restart it.
+### 2. If AnythingLLM refresh button fails, run this command to restart it.
 
 ```shell
 oc rollout restart statefulset anythingllm -n admin-workshop
