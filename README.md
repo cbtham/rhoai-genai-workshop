@@ -607,8 +607,11 @@ To deploy llama-stack playground, follow on. The playground is a streamlit based
     oc get route llama-stack-playground -n llama-stack -o jsonpath='https://{.spec.host}{"\n"}'
     ```
 4. Open a new tab in your browser and visit the URL to access the playground UI.
+</br></br>Ensure to select **agent-based** and **openshift MCP** on the right panel.
     ![Image](img/07/7.2.1.png)
 
+    Ask *How many pods are there in llama-stack namespace?*
+        ![Image](img/07/7.2.2.png)
 
 ## Knowledge Base
 ### 1. Model pod automatically terminated (Workaround)
