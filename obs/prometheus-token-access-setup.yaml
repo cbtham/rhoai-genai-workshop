@@ -1,0 +1,1696 @@
+---
+# Role to allow reading secrets in the admin namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: ${ADMIN_NAMESPACE}
+  name: secret-reader
+  labels:
+    purpose: workshop-prometheus-access
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+---
+# RoleBinding for user1
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user1
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user1
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user2
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user2
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user2
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user3
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user3
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user3
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user4
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user4
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user4
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user5
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user5
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user5
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user6
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user6
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user6
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user7
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user7
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user7
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user8
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user8
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user8
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user9
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user9
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user9
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user10
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user10
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user10
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user11
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user11
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user11
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user12
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user12
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user12
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user13
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user13
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user13
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user14
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user14
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user14
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user15
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user15
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user15
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user16
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user16
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user16
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user17
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user17
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user17
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user18
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user18
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user18
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user19
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user19
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user19
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user20
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user20
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user20
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user21
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user21
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user21
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user22
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user22
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user22
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user23
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user23
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user23
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user24
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user24
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user24
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user25
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user25
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user25
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user26
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user26
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user26
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user27
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user27
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user27
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user28
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user28
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user28
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user29
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user29
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user29
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user30
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user30
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user30
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user31
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user31
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user31
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user32
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user32
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user32
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user33
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user33
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user33
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user34
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user34
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user34
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user35
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user35
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user35
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user36
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user36
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user36
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user37
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user37
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user37
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user38
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user38
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user38
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user39
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user39
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user39
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user40
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user40
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user40
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user41
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user41
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user41
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user42
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user42
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user42
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user43
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user43
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user43
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user44
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user44
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user44
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user45
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user45
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user45
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user46
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user46
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user46
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user47
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user47
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user47
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user48
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user48
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user48
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user49
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user49
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user49
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user50
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user50
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user50
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user51
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user51
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user51
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user52
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user52
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user52
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user53
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user53
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user53
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user54
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user54
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user54
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user55
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user55
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user55
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user56
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user56
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user56
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user57
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user57
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user57
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user58
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user58
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user58
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user59
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user59
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user59
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user60
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user60
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user60
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user61
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user61
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user61
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user62
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user62
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user62
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user63
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user63
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user63
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user64
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user64
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user64
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user65
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user65
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user65
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user66
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user66
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user66
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user67
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user67
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user67
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user68
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user68
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user68
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user69
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user69
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user69
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user70
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user70
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user70
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user71
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user71
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user71
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user72
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user72
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user72
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user73
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user73
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user73
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user74
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user74
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user74
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user75
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user75
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user75
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user76
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user76
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user76
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user77
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user77
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user77
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user78
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user78
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user78
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user79
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user79
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user79
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user80
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user80
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user80
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user81
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user81
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user81
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user82
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user82
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user82
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user83
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user83
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user83
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user84
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user84
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user84
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user85
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user85
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user85
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user86
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user86
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user86
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user87
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user87
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user87
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user88
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user88
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user88
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user89
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user89
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user89
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user90
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user90
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user90
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user91
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user91
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user91
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user92
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user92
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user92
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user93
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user93
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user93
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user94
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user94
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user94
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user95
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user95
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user95
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user96
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user96
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user96
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user97
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user97
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user97
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user98
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user98
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user98
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for user99
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-access-user99
+  namespace: ${ADMIN_NAMESPACE}
+  labels:
+    purpose: workshop-prometheus-access
+subjects:
+- kind: User
+  name: user99
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io

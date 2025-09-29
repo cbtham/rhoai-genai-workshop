@@ -1,15 +1,14 @@
 # Workshop Guide To Deploy AI Models on Red Hat OpenShift AI (RHOAI)
 
 ## Overview
-1.  Walkthrough of the provisioned environment, Red Hat Openshift AI Dashboard
-
-1. Connect to a pre-packaged LLM modelcar container
 
 1. Deploy a generative AI model with serving endpoint
 
-1. Create and use a custom workbench with the deployed inference server
+1. Create and use a workbench with the deployed inference server
 
-1. QnA with Retrieval Augmented Generation
+1. QnA with Retrieval Augmented Generation (RAG)
+
+1. Agentic AI and MCP Servers
 
 1. Monitor the deployed model
 
@@ -243,158 +242,18 @@ You may insert your own pdf, csv or any digestible format for RAG. In this guide
 11. After that, ask the question ***What is Red Hat's AI vision?***
 and you can see the answer is much more detailed and with reference to the scraped website compared to when you have not provide it a data source.
 
-12. Behind the scenes, AnythingLLM scraped the website, chunked it and embedded it into the workspace. This view is only available as admin.
+12. In your organization, you can extend this to scrape internal knowledge bases, git repository, configuration playbooks for example.
+
+13. Behind the scenes, AnythingLLM scraped the website, chunked it and embedded it into the workspace. 
     ![Image](../img/05/5.7.5.png)
+14. To see this, go to OpenShift console and select administrator view, click in your project pods, and look for the log section.
+    ![Image](../img/07/7.0.1.png) </br>
+    ![Image](../img/05/5.7.6.png) </br>
+    ![Image](../img/05/5.7.7.png) </br>
+    ![Image](../img/05/5.7.8.png) </br>
+    ![Image](../img/05/5.7.9.png)
 
-13. In your organization, you can extend this to scrape internal knowledge bases, git repository, configuration playbooks for exaple
-## 6. Setting up Observability Stack & Collecting Metrics
-
-The following section requires you run code in a Terminal. You can run this directly on Red Hat Openshift console or run this through your local terminal connected to the openshift cluster. When you are ready, git clone this repository.
-
-```shell
-git clone https://github.com/cbtham/rhoai-genai-workshop.git
-```
-
-### 6.1 Prometheus 
-
-#### 6.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
-
-Prometheus is installed by default with OpenShift. However, the default monitoring stack only collects metrics related to core OpenShift platform components. Therefore we need to enable User Workload Monitoring in order to collect metrics from the model we have deployed. 
-
-In order to enable monitoring for user-defined projects, we need to set `enableUserWorkload: true` in the cluster monitoring ConfigMap object. You can do this by applying the following yaml:
-
-```
-oc apply -f obs/cluster-monitoring-config.yaml -n openshift-monitoring
-```
-
-#### 6.1.2 Add vLLM metrics to user-workload (uwl) metrics allowlist
-
-Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want Prometheus to gather. We can do this by adding `vllm:.*` to the `metrics_allowlist.yaml` in the project namespace. Before applying the yaml, make sure to **CHANGE** the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, deploy with the following command.
-
-```shell
-oc apply -f obs/metrics_allowlist.yaml
-```
-> Note: If you face Error from server (NotFound): error when creating "obs/metrics_allowlist.yaml": namespaces "YOUR_PROJECT_NAMESPACE" not found, modify the metrics_allowlist.yaml to include reflect your project namespace.
-
-### 6.2 Grafana
-
-#### 6.2.1 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
-
-1. Create Grafana namespace
-
-```
-oc create namespace grafana
-```
-
-2. Deploy grafana PVC, Service, and Deployment
-
-```
-oc apply -f obs/grafana-setup.yaml -n grafana
-```
-
-3. Apply route to expose Grafana UI externally
-
-```
-oc apply -f obs/expose-grafana.yaml -n grafana
-```
-
-4. Get the Grafana route URL:
-
-```
-oc get route grafana -n grafana -o jsonpath='https://{.spec.host}{"\n"}'
-```
-
-
-#### 6.2.2 Adding Data Source to Grafana
-
-1. Create Grafana Secret Token
-
-This is used so that Grafana can access the Prometheus Data Source.
-
-
-```
-oc apply -f obs/grafana-prometheus-token.yaml -n grafana --namespace=openshift-monitoring
-```
-
-Get the token by running the following command:
-
-```
-oc get secret grafana-prometheus-token \
-  -n openshift-monitoring \
-  -o jsonpath='{.data.token}' | base64 -d && echo
-```
-
-2. Add Data Source in Grafana UI
-
-Navigate to data sources -> add data source
-
-![Image](../img/06/5.1.png)
-
-![Image](../img/06/5.2.png)
-
-Select Prometheus as the data source, then fill in the following values:
-- ***Prometheus Server URL***: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
-- ***Skip TLS certificate Validation***: Check this box 
-- ***HTTP headers***:
-    - Header: Authorization
-    - Value: Bearer [Token created in step 6.2.2]
-
-  > Prometheus server url is the same for everyone
-  
-  > The Value should include "Bearer\<SPACE\>YOUR_TOKEN"
-
-Once the above is filled out, hit save and test at the bottom. You should then see the following:
-
-![Image](../img/06/5.3.png)
-
-3. Verify vLLM and DCGM Metrics can be read from Data Source
-
-We want to make sure Grafana is actually getting the vLLM and DCGM metrics from the Data Source.
-
-Go to explore->metrics explorer and then for the metric value type vllm, verify that you can see the different vllm metrics. Then type DCGM, and verify you can see the different DCGM metrics.
-
-![Image](../img/06/5.4.png)
-
-![Image](../img/06/5.5.png)
-
-
-### 6.3 Importing vLLM Dashboard
-
-The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
-
-Go to Dashboards -> Create Dashboard
-
-![Image](../img/06/5.6.png)
-
-Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json) or just copy and paste the yaml into the box provided.
-
-![Image](../img/06/5.7.png)
-
-Then hit load, then Import.
-
-### Optional: vLLM Advanced Performance Dashboard
-This dashboard is meant to provide high level metrices - key to assist in setting SLO, monitoring and improving performance.
-
-To add this, select Import a dashboard. Then copy and paste the content of [vLLM Advanced Performance Dashboard yaml](../obs/grafana-dashboard-llm-performance.json) to import.
-
-
-### 6.4 Importing DCGM Dashboard
-
-The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/. 
-
-Go back to dashboards in Grafana UI and select new->import. Copy the following dashboard ID: `12239`. Paste that dashboard ID on Import Dashboard page. Then hit load.
-
-![Image](../img/06/5.8.png)
-
-Select prometheus data source then select Import.
-
-![Image](../img/06/5.9.png)
-
-Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
-
-![Image](../img/06/5.10.png)
-
-## 7.0 Agentic AI & MCP Server
+## 6.0 Agentic AI & MCP Server
 
 Prerequisite: The following section requires you to use Terminal or CLI commands. We will deploy llama-stack, an open-sourced developer framework and library by Meta for building agentic AI. 
 
@@ -410,7 +269,7 @@ Prerequisite: The following section requires you to use Terminal or CLI commands
     ```
 1. Now, let's proceed on.
 
-### 7.1 Deploying Llama Stack and MCP Server
+### 6.1 Deploying Llama Stack and MCP Server
 Llama Stack is a developer framework for building generative AI applications — are set up and connected to create a production-ready environment across various environments like on-prem, air-gapped or the cloud.
 
 We will need a few components:-
@@ -473,7 +332,7 @@ Model Context Protocol, MCP is an open standard for AI agents and LLMs to connec
     perl -pe 's/\$\{([^}]+)\}/$ENV{$1}/g' obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json > /tmp/anythingllm_mcp_servers.json && oc cp /tmp/anythingllm_mcp_servers.json anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
     ```
 
-### 7.1 Giving your LLM the power to call tools and use MCP
+### 6.2 Giving your LLM the power to call tools and use MCP
 To do this, we will need to go back to OpenShift AI portal. We will need to modify the deployment.
 1. In your datascience project **Models** tab, select the LLM that you have deployed and choose edit. 
     ![Image](../img/07/7.1.png)
@@ -488,7 +347,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ![Image](../img/07/7.0.7.png)
 1. When the LLM model finish re-deploy, we will be able to test.
 
-### 7.2 Test and interact with your LLM model with tool call capability
+### 6.3 Test and interact with your LLM model with tool call capability
 
 #### AnythingLLM
 
@@ -549,6 +408,119 @@ To deploy llama-stack playground, follow on. The playground is a streamlit based
 
     Ask *How many pods are there in YOUR-PROJECT-NAMESPACE namespace?*
         ![Image](../img/07/7.2.2.png)
+
+## 7.0. Setting up Observability Stack & Collecting Metrics
+
+The following section requires you run code in a Terminal. You can run this directly on Red Hat Openshift console or run this through your local terminal connected to the openshift cluster. 
+
+In your terminal or Openshift CLI, run this
+![Image](../img/06/6.0.1.png)
+```shell
+git clone https://github.com/cbtham/rhoai-genai-workshop.git
+```
+
+### 7.1 Prometheus 
+
+#### 7.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
+
+Prometheus is installed by default with OpenShift. However, the default monitoring stack is ONLY ACCESSIBLE to administrator or users that have given permission. Prometheus collects metrics related to core OpenShift platform components. 
+
+Your administrator, in this case the workshop facilitator has already enabled monitoring and will be providing you with a token for you to consume the metrics.
+
+### 7.2 Grafana
+
+#### 7.2.1 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
+
+1. Deploy grafana PVC, Service, and Deployment
+> Be sure to use your project name.
+```
+oc apply -f obs/grafana-user-setup.yaml -n YOUR_PROJECT_NAME
+```
+2. Get the Grafana route URL:
+
+```
+oc get route grafana -o jsonpath='https://{.spec.host}{"\n"}'
+```
+> Grafana takes a while to deploy. Do wait a few minutes.
+3. To check status, run
+```
+oc get pods -n YOUR_PROJECT_NAME
+```
+
+
+#### 7.2.2 Adding Data Source to Grafana
+
+1. Get Grafana Secret Token
+
+    This is used so that Grafana can access the Prometheus Data Source.
+
+    ```
+    export PROMETHEUS_TOKEN=$(oc get secret prometheus-token \
+    -n admin-workshop \
+    -o jsonpath='{.data.token}' | base64 -d)
+    ```
+
+2. Add Data Source in Grafana UI
+
+    Navigate to data sources -> add data source
+
+    ![Image](../img/06/5.1.png)
+
+    ![Image](../img/06/5.2.png)
+
+    Select Prometheus as the data source, then fill in the following values:
+    - ***Prometheus Server URL***: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    - ***Skip TLS certificate Validation***: Check this box 
+    - ***HTTP headers***:
+        - Header: Authorization
+        - Value: *Get from running the command below. Copy entire thing.*
+    ```
+    echo "Bearer $PROMETHEUS_TOKEN"
+    ```
+    </br>
+
+    ![Image](../img/05/5.2-1.png)
+
+    Once the above is filled out, scroll all the way down and hit Save & test button. You should then see the following:
+
+    ![Image](../img/06/5.3.png)
+
+### 7.3 Importing vLLM Dashboard
+
+The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
+
+Go to Dashboards -> Create Dashboard
+
+![Image](../img/06/5.6.png)
+
+Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json) or just copy and paste the yaml into the box provided.
+
+![Image](../img/06/5.7.png)
+
+Then hit load, then Import.
+
+### Optional: vLLM Advanced Performance Dashboard
+This dashboard is meant to provide high level metrices - key to assist in setting SLO, monitoring and improving performance.
+
+To add this, select Import a dashboard. Then copy and paste the content of [vLLM Advanced Performance Dashboard yaml](../obs/grafana-dashboard-llm-performance.json) to import.
+
+
+### 7.4 Importing DCGM Dashboard
+
+The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/. 
+
+Go back to dashboards in Grafana UI and select new->import. Copy the following dashboard ID: `12239`. Paste that dashboard ID on Import Dashboard page. Then hit load.
+
+![Image](../img/06/5.8.png)
+
+Select prometheus data source then select Import.
+
+![Image](../img/06/5.9.png)
+
+Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
+
+![Image](../img/06/5.10.png)
+
 
 ## Knowledge Base
 ### Model pod automatically terminated (Workaround)
