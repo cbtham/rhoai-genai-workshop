@@ -571,11 +571,12 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ```shell
     oc cp obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json admin-workshop/anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
     ```
-1. Restart/Refresh AnythingLLM
-
-    ```shell
-    oc rollout restart statefulset anythingllm -n admin-workshop
-    ```
+1. Restart/Refresh AnythingLLM.
+1. Go to Agent skills, scroll down to MCP servers and hit refresh.
+    ![Image](img/07/7.0.9.png)
+1. After that you will be able to see the Openshift MCP Server.
+    ![Image](img/07/7.0.10.png)
+1. To test, go to chat or agent chat. Ensure use @agent.
 
 #### Optional : Deploy Llama-stack Playground To Test MCP
 
@@ -623,6 +624,13 @@ oc scale deployment/demo-granite-predictor-00001-deployment --replicas=1 -n sand
 ```
 
 After this it will take some time for the model pod to spin back up.
+
+
+### If AnythingLLM refresh button fails, run this command to restart it.
+
+```shell
+oc rollout restart statefulset anythingllm -n admin-workshop
+```
 
 #
 
