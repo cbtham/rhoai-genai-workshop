@@ -436,16 +436,20 @@ Your administrator, in this case the workshop facilitator has already enabled mo
 ```
 oc apply -f obs/grafana-user-setup.yaml -n YOUR_PROJECT_NAME
 ```
-2. Get the Grafana route URL:
-
-```
-oc get route grafana -o jsonpath='https://{.spec.host}{"\n"}'
-```
 > Grafana takes a while to deploy. Do wait a few minutes.
-3. To check status, run
+2. To check status, run
 ```
 oc get pods -n YOUR_PROJECT_NAME
 ```
+3. Get the Grafana route URL:
+```
+oc get route grafana -o jsonpath='https://{.spec.host}{"\n"}'
+```
+4. Visit the url and login with admin admin.
+![Image](../img/06/6.0.2.png)
+</br>
+Skip changing the password.
+![Image](../img/06/6.0.3.png)
 
 
 #### 7.2.2 Adding Data Source to Grafana

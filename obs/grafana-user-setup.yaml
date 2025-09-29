@@ -20,43 +20,26 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
-              name: http-grafana
+              name: http
               protocol: TCP
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /robots.txt
-              port: 3000
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            successThreshold: 1
-            timeoutSeconds: 2
-          livenessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            tcpSocket:
-              port: 3000
-            timeoutSeconds: 1
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: "admin"
+            - name: GF_INSTALL_PLUGINS
+              value: ""
+            - name: GF_PATHS_DATA
+              value: "/tmp"
+            - name: GF_PATHS_LOGS
+              value: "/tmp"
+            - name: GF_PATHS_PLUGINS
+              value: "/tmp"
           resources:
             requests:
-              cpu: 250m
-              memory: 750Mi
-          volumeMounts:
-            - mountPath: /var/lib/grafana
-              name: grafana-storage
-          env:
-            - name: GF_PATHS_DATA
-              value: /tmp/grafana
-            - name: GF_PATHS_LOGS
-              value: /tmp/grafana/logs
-            - name: GF_PATHS_PLUGINS
-              value: /tmp/grafana/plugins
-      volumes:
-        - name: grafana-storage
-          emptyDir: {}
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
 ---
 apiVersion: v1
 kind: Service
@@ -64,9 +47,10 @@ metadata:
   name: grafana
 spec:
   ports:
-    - port: 3000
+    - name: http
+      port: 3000
       protocol: TCP
-      targetPort: http-grafana
+      targetPort: 3000
   selector:
     app: grafana
   sessionAffinity: None
@@ -79,10 +63,12 @@ metadata:
   labels:
     app: grafana
 spec:
-  port:
-    targetPort: http-grafana
   to:
     kind: Service
     name: grafana
     weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
   wildcardPolicy: None
