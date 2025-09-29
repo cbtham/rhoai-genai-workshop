@@ -579,6 +579,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ![Image](img/07/7.0.10.png)
 1. To test, go to chat or agent chat. Ensure to type in @agent before your question.
     ![Image](img/07/7.0.11.png)
+    ![Image](img/07/7.0.12.png)
 
 
 > Your MCP server currently can only access it's own namespace. </br>
