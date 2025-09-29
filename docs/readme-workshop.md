@@ -472,7 +472,7 @@ oc get pods -n YOUR_PROJECT_NAME
     - ***Prometheus Server URL***: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
     - ***Skip TLS certificate Validation***: Check this box 
     - ***HTTP headers***:
-        - Header: Authorization
+        - Header: *Authorization*
         - Value: *Get from running the command below. Copy entire thing.*
     ```
     echo "Bearer $PROMETHEUS_TOKEN"
