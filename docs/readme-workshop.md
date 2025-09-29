@@ -478,6 +478,10 @@ oc get pods -n YOUR_PROJECT_NAME
     echo "Bearer $PROMETHEUS_TOKEN"
     ```
     </br>
+    Copy starting from Bearer
+
+    ![Image](../img/06/5.2-10.png)
+    </br></br></br>
 
     ![Image](../img/05/5.2-1.png)
 
