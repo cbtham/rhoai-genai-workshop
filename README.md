@@ -556,6 +556,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ```
     >Note: Qwen3 models use hermes parser. If you are using other LLM models, you may need to modify the parser. Check the foundation model provider docs for more information.
 
+    ![Image](img/07/7.0.7.png)
 1. When the LLM model finish re-deploy, we will be able to test.
 
 ### 7.2 Test and interact with your LLM model with tool call capability
@@ -563,6 +564,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
 #### AnythingLLM
 
 1. Change context to 8192 as tool calling to MCP will consume a lot more token.
+    ![Image](img/07/7.0.8.png)
 
 1. Add the configuration to the successfully deployed MCP server
 
