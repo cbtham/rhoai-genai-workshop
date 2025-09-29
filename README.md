@@ -567,6 +567,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ![Image](img/07/7.0.8.png)
 
 1. Add the configuration to the successfully deployed MCP server
+    > Change the admin-workshop to your namespace!
 
     ```shell
     oc cp obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json admin-workshop/anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
