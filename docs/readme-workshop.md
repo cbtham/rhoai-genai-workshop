@@ -133,22 +133,16 @@ You can change the ***temperature*** of the query. The temperature essentially c
 
 **Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.**
 
-## 5. Deploy A Custom Workbench To Interact With The LLM
+## 5. Deploy A Workbench To Interact With The LLM
+Workbench is a containerized, development environment for data scientists, AI engineers to build, train, test and iterate within the OpenShift AI platform.
 
 ### 5.1 AnythingLLM
-AnythingLLM is a full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
+AnythingLLM is a full-stack workbench that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
 #### 5.1.1 AnythingLLM in Red Hat Openshift AI
 To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications as workbench easily. In your organization, you can BYO workbench as well!
   
-  >**Step 1 may already have been setup by your admin. If you are participating in a workshop, skip this and continue on to **step 2**.**
-
-  1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/rh-aiservices-bu/anythingllm-workbench:1.8.5``` Copy the URL and paste it into Settings > Workbench Images > image location.
-
-      ![Image](../img/05/5.1.png)
-
-  >**Step 2 : If you're a workshop participant, start here!**
-  2. Create a new workbench, pick the name of the workbench you have given in the previous step. If you are participating in a workshop and your admin have already set up for you, choose "AnythingLLM".
+  1. Create a new workbench, pick the name of the workbench you have given in the previous step. If you are participating in a workshop and your admin have already set up for you, choose "AnythingLLM".
 
       ![Image](../img/05/5.2.png)
 

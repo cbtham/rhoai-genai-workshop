@@ -273,10 +273,10 @@ You can change the ***temperature*** of the query. The temperature essentially c
 Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe. -->
 
 ## 2.0 Create and use a custom workbench with the deployed inference server
-Think of workbench as an application in a wall garden. 
+Workbench is a containerized, development environment for data scientists, AI engineers to build, train, test and iterate within the OpenShift AI platform.
 
 ### 2.1 AnythingLLM
-AnythingLLM is a full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
+AnythingLLM is a full-stack workbench that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
 #### 2.1.1 AnythingLLM in Red Hat Openshift AI
 To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily.
@@ -331,7 +331,7 @@ LanceDB is deployed as part of AnythingLLM. You may explore the settings page of
 ### 3.1 Scraping Website For RAG
 You may insert your own pdf, csv or any digestible format for RAG. In this guide, we will step up a notch to scrape website and use its data as RAG. We will use built-in scraper from AnythingLLM, after getting the data, it will chunk it and store in the vector database LanceDB for retrieval.
 
-1. We first ask a question and capture the default response. We'll see the LLM gave us a generic response.
+We first ask a question and capture the default response. We'll see the LLM gave us a generic response.
    > Ask: What is an AI tool from Intel?
    ![Image](img/05/5.7.png)
    
