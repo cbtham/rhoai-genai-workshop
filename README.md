@@ -591,15 +591,22 @@ Select Prometheus as the data source, then fill in the following values:
 - ***Skip TLS certificate Validation***: Check this box 
 - ***HTTP headers***:
     - Header: Authorization
-    - Value: Bearer [Token created in step 6.2.2]
+    - Value: Bearer [Space] [Token created in step 6.2.2]
 
   > Prometheus server url is the same for everyone
   
-  > The Value should include "Bearer\<SPACE\>YOUR_TOKEN"
+  > The parameter of "Value" should include "Bearer\<SPACE\>YOUR_TOKEN"
 
-Once the above is filled out, hit save and test at the bottom. You should then see the following:
+    </br>
 
-![Image](img/06/5.3.png)
+    ![Image](/img/06/5.2-10.png)
+    </br></br></br>
+
+    ![Image](/img/05/5.2-1.png)
+
+    Once the above is filled out, hit save and test at the bottom. You should then see the following:
+
+    ![Image](img/06/5.3.png)
 
 4. Verify vLLM and DCGM Metrics can be read from Data Source
 
@@ -614,7 +621,7 @@ Once the above is filled out, hit save and test at the bottom. You should then s
 
 ### 5.3 Importing vLLM Dashboard
 
-The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
+The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. It gives you an insight to key metrices of your deployed LLM/s. 
 
 1. Go to Dashboards -> Create Dashboard
 
