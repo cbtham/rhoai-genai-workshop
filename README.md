@@ -1,11 +1,16 @@
 # Guide To Deploy AI Models on Red Hat OpenShift AI (RHOAI)
 If you are in a workshop, **[start here](/docs/readme-workshop.md)**.
 
+### Prerequisites for environment 
+
+An OpenShift cluster that have OpenShift AI with Nvidia GPU. 
+- For Red Hatters, provision a demo environment from the demo catalog, ie. RHOAI on OCP on AWS with NVIDIA GPUs. 
+- For attendees, this is already setup for you - **[start here](/docs/readme-workshop.md)**.
+
 ## Overview
-1. Create a S3 compatible object store - MinIO.
-
 1. Deploy a generative AI model with serving endpoint
-
+    - Option 1: Modelcar - Pre-packaged LLM in container
+    - Option 2: Object store - Any model from HuggingFace
 1. Create and use a custom workbench with the deployed inference server
 
 1. QnA with Retrieval Augmented Generation
@@ -14,46 +19,113 @@ If you are in a workshop, **[start here](/docs/readme-workshop.md)**.
 
 1. Monitor the deployed model
 
-## Prerequisites 
-
-A cluster that has been properly configured for model serving. If cluster is not yet properly configured follow the [Guide to Configuring RHOAI for Model Deployment](https://github.com/IsaiahStapleton/rhoai-config-guide)
 
 ## Purpose
 
-The purpose for this guide is to offer the simplest steps for deploying a **privately hosted AI model** on Red Hat Openshift AI. This guide will be covering deploying a Red Hat certified ***Qwen3 Model*** using the ***vLLM ServingRuntime for KServe*** on ***NVIDIA GPU***. In addition to deploying the model, this guide will cover setting up a simple observability stack so that you can collect and visualize metrics related to AI model performance and GPU information.
-
-## 1. Deploying S3 Storage using Minio 
-
-### 1.1 What is Minio?
-
-[Minio](https://min.io/) is a high-performance, S3 compatible **object store**. It can be deployed on a wide variety of platforms, and it comes in multiple [flavors](https://min.io/pricing).
-
-### 1.2 Deploying Minio in Project Namespace
-
-1. Apply the minio setup
-- By default, the size of the storage is 50 GB. (see line 11). Change it if you need to, however it is not necessary to change it for this guide.
-- If you want to, edit lines 21-22 to change the default user/password.
-
-```
-oc apply -f minio-setup.yaml
-```
+The purpose for this guide is to offer the simplest steps for deploying a **privately hosted AI model** on Red Hat Openshift AI. This guide will be covering deploying a Red Hat certified ***Qwen3 Model*** using the ***vLLM ServingRuntime for KServe*** on ***NVIDIA GPU***. This guide will also cover setting up MCP server and agentic AI along with a simple observability stack so that you can collect and visualize metrics related to AI model performance and GPU information.
 
 
-2. Give it a minute, and there should now be a running minio pod:
 
-![Image](img/01/1.3.png)
+## 1. Deploy a generative AI model with serving endpoint
 
-3. As well as two minio routes:
-- The -api route is for programmatic access to Minio
-- The -ui route is for browser-based access to Minio
+### 1.1 Option 1: Using a pre-built LLM container. (Faster)
 
-![Image](img/01/1.4.png)
+Option 1 Modelcar explores the method of using a pre-built container with a serving endpoint. This is the easiest way to get a LLM model running on Red Hat OpenShift AI.
 
-## 2. Getting An Open Sourced Model 
+1. Create a workspace by going into your Openshift AI portal. Go to Data Science Projects and create a project.
+    ![Image](/img/04/4.0.png)
+1. Now in a new browser tab, navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog to get the modelcar models.
+1. Go to the container tag page and select a model you want to use. In this example, we will use qwen3-4b. 
+1. Click the download/save button to reveal the tags, select any of the tag to reveal the URI.
+    ![Image](/img/03/3.1.0-1.png)
+    ![Image](/img/03/3.1.3.png)
+1. Copy the URL from **quay.io** onwards.
+1. Next, deploy the model by navigating to the Models tab in your workspace on Red Hat Openshift AI. Go to the Models tab within your Data Science Project and select single-model serving:
+    ![Image](/img/04/4.3.png)
+1. Fill in a name, ensure to choose nvidia gpu serving runtime and deployment mode to **Standard**.
+    ![Image](/img/03/3.1.1.png)
+1. Remember to check the box to secure the LLM model endpoint that you are about to deploy.
+    ![Image](/img/03/3.1.1-2.png)
+1. Select connection type *URI - v1* and give it a name. A good practice is to name it the model you are about to deploy.
+1. Next, append the URI with **oci://**
+    ![Image](/img/03/3.1.2.png)
+
+    ```
+    oci://quay.io/redhat-ai-services/modelcar-catalog:qwen3-4b
+    ```
+
+    >Note: If you face resource problems, try select a smaller model. For example qwen2.5-0.5b
+        ```
+        oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2.5-0.5b-instruct
+        ```
+
+1. Your deployment will look something like this.
+
+    - ***Model deployment name***: Name of the deployed model
+    - ***Serving runtime***: vLLM NVIDIA GPU ServingRuntime for KServe
+    - ***Model server size***: You can select whatever size you wish, for this guide I will keep the small size 
+    - ***Accelerator***: Select NVIDIA GPU
+    - ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
+    - ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name.
+
+1. Wait for the model to finish deploy and the status turns green. 
+    > Note: It may take up to a few minutes depending on model size.
+
+    ![Image](/img/03/3.1.4.png)
+1. In production deployment, you might want to adjust the vllm parameter args to fit your use case, for example increase context length or apply certain quantization. Every use case is different and there is no silver bullet for a config that fits all. 
+1. Congratulations, you have just deployed your very first LLM model!
+
+### 1.2 Option 2: Object store - Any model from HuggingFace
+If you have completed the option above, you can skip this. If you want to learn, carry on.
+
+This option explores deploying any HuggingFace model with an object store. In this option, an object store(MinIO) is deployed to act as a model storage. You will upload a model of your choice to MinIO and have OpenShift AI to get the model from the storage.
+
+### 1.2.1 Create a S3 compatible object store - MinIO
+
+[Minio](https://min.io/) is a high-performance, S3 compatible **object store**. It can be deployed on a wide variety of platforms.
+
+1. We will be deploying Minio in a project namespace.
+
+1. From the console, click the CLI icon and start a terminal session.
+    > Note: Configure the terminal timeout option to be at least 2 hours. If not the terminal will be killed before your model download finishes. </br>
+    > Note: If you are using your own computer, this is not required. On a mac, install openshift cli via brew. Look this up on how to do so.
+    ![Image](/img/07/7.0.2.png)
+</br></br>
+    ```
+    git clone https://github.com/cbtham/rhoai-genai-workshop.git && cd rhoai-genai-workshop
+    ```
+    ```
+    oc new-project minio
+    ```
+    ```
+    oc apply -f minio-setup.yaml -n minio
+    ```
+    - By default, the size of the storage is 150 GB. (see line 11). Change it if you need to, however it is not necessary to change it for this guide.
+    - If you want to, edit lines 21-22 of [minio-setup.yaml](./minio-setup.yaml) to change the default user/password.
+1. From the console, click the CLI icon and start a terminal session.
+    ![Image](/img/07/7.0.2.png)
+</br></br>
+    ```
+    git clone https://github.com/cbtham/rhoai-genai-workshop.git && cd rhoai-genai-workshop
+    ```
+    ```
+    oc apply -f minio-setup.yaml
+    ```
+
+1. Give it a minute, and there should now be a running minio pod:
+
+    ![Image](img/01/1.3.png)
+
+1. Two routes will be created in the Networking tab:
+    - The --api route is for programmatic access to Minio
+    - The --ui route is for browser-based access to Minio
+        ![Image](img/01/1.4.png)
+
+### 1.2.2 Getting An Open Sourced LLM Model
 
 Navigate to https://huggingface.co/ and find the model you would like to deploy. 
 
-In this workshop, we will be using Red Hat certified models at https://huggingface.co/RedHatAI. We will use the ([Qwen3-4B-quantized.w4a16 model](https://huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a16)).
+In this guide, we will be deploying a Red Hat certified models at https://huggingface.co/RedHatAI. We will use the ([Qwen3-4B-quantized.w4a16 model](https://huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a16)).
 
 First you need to generate an access token:
 1. Navigate to settings -> access tokens
@@ -72,39 +144,11 @@ For me this looks like
 ```
 git clone https://cbtham:<token>@huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a16
 ```
+> This will take some time depending on the model you are downloading. Some model like gpt-oss-120b is nearing 100GB!
 
+### 1.2.3 Upload Model to the S3 Minio Storage
 
-## 3. Deploy a generative AI model with serving endpoint
-
-Go with either 
-
-Option 1: Upload model in to minio (Use ANY model)
-</br></br>OR
-
-Option 2: Pre-built LLM container. (Faster)
-### Option 1: Use a pre-built modelcar container
-Option 1 explores the method of using a pre-built container as a serving endpoint. We will deploy this modelcar container. This is the easiest way to get a LLM model running on Red Hat OpenShift AI.
-
-1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog
-1. Select a containerized model you want to use. In this example, we will use qwen3-4b. 
-1. Click the download/save button to reveal the tags, select any of the tag to reveal the URI.
-![Image](img/03/3.1.3.png)
-1. Copy the URL from quay.io onwards.
-1. Next, deploy the model by navigating to the Models tab in your workspace on Red Hat Openshift AI.
-1. Fill in the details, ensure to choose nvidia gpu serving runtime and deployment mode to Standard.
-![Image](img/03/3.1.1.png)
-1. Select connection type *URI - v1* and give it a name. A good practice is to name it the model you are about to deploy.
-1. Next, append the URI with oci://
-![Image](img/03/3.1.2.png)
-1. Wait for the model to finish deploy and the status turns green. 
-    > Note: It may take up to a few minutes depending on model size.
-
-    ![Image](img/03/3.1.4.png)
-
-### Option 2: Upload Model to the S3 Minio Storage
-
-Option 2 explores a method to upload a model from HuggingFace to S3 Storage.
-1. Assuming you followed the steps above to deploy minio storage, navigate to the minio UI, found in Networking -> routes within the openshift console.
+1. Assuming you followed the steps above to deploy a minio storage, navigate to the minio UI, found in Networking -> routes within the openshift console.
 
     ![Image](img/03/3.1.png)
 
@@ -125,35 +169,27 @@ Option 2 explores a method to upload a model from HuggingFace to S3 Storage.
     ![Image](img/03/3.5.png)
 
 
-## 4. Deploying Model on Red Hat OpenShift AI
+### 1.2.4 Deploying Model on Red Hat OpenShift AI
 
-### 4.0.1 Create a workspace
-Login to your openshift account. If you're in a workshop, click [here](https://rhods-dashboard-redhat-ods-applications.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com/). Go to Data Science Projects and create a project.
+1. Go to Openshift AI Console. Create a datascience project.
+    ![Image](img/04/4.0.png)
 
-  ![Image](img/04/4.0.png)
+1. Next, create S3 Storage data connection. We will need to create a linkage to the deployed S3 storage. You can also BYO storage by inputing the connection information with any S3 compatible storage provider you prefer.
 
-### 4.1 Create S3 Storage Data Connection on Red Hat Openshift AI
-
-In the Red Hat OpenShift AI portal, we will need to create a linkage to the deployed S3 storage. You can also BYO Storage by connecting it with the S3 compatible storage you prefer.
-
-1. In Red Hat OpenShift AI, within your data science project, navigate to connections and select create connection
+1. Within your data science project, navigate to connections and select create connection
 
     ![Image](img/04/4.1.png)
 
-2. Fill in the following values:
-- Connection name: name of your data connection **MinIO**
-- Access key: username of minio deployment **[minio]**
-- Secret key: password for minio deployment **[minio123]**
-- Endpoint: **API** endpoint of the minio deployment **[https://minio-api-admin-demo.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com]**
-- Bucket: name of the minio bucket you created **[models]**
+1. Fill in the following values:
+    - Connection name: name of your data connection **MinIO**
+    - Access key: username of minio deployment **[minio]**
+    - Secret key: password for minio deployment **[minio123]**
+    - Endpoint: **API** endpoint of the minio deployment **[YOUR_OWN_MINIO_API_URL_GET_FROM_ROUTES]**
+    - Bucket: name of the minio bucket you created **[models]**
 
   ![Image](img/04/4.2.png)
 
-### 4.2. Deploy your Model!
-
-If you are in a workshop, navigate to the [Minio UI](https://minio-ui-admin-demo.apps.cluster-75k6n.75k6n.sandbox3005.opentlc.com/). You'll see a few pre-uploaded models. Pick one of it as part of the exercise.
-
-Go to the Models tab within your Data Science Project and select single-model serving:
+1. Next deploy your model. Go to the Models tab within your Data Science Project and select single-model serving:
 
 <!-- ***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step*** -->
 
@@ -166,7 +202,7 @@ After selecting single-models serving, select Deploy Model
 2. Fill in the following values:
 - ***Model deployment name***: Name of the deployed model
 - ***Serving runtime***: vLLM NVIDIA GPU ServingRuntime for KServe
-- ***Model server size***: You can select whatever size you wish, for this guide I will keep the small size 
+- ***Model server size***: Select small. Adjust as you need.
 - ***Accelerator***: Select NVIDIA GPU
 - ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
 - ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name
@@ -176,9 +212,13 @@ After selecting single-models serving, select Deploy Model
 
   ![Image](img/04/4.6.png)
 
-Once that is done, you are all set to hit Deploy! It will take some time for the model to be deployed.
+3. Once that is done, you are all set to hit Deploy! </br>
+1. It will take some time for the model to be deployed.
+1. When you see the green tick, you are done.
+    ![Image](/img/03/3.1.4.png)
+1. Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
 
-### 4.3 Query Model Inference Endpoint
+<!-- ### 4.3 Query Model Inference Endpoint
 
 Once your model pod is in a running state, you can try querying it in order to test if the endpoint is reachable and the model is returning correctly. The status will have a green tick.
 
@@ -230,24 +270,23 @@ You can change the ***temperature*** of the query. The temperature essentially c
 
 ### 4.4 Wrapping Up
 
-Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
+Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe. -->
 
-## 5. Deploy A Custom Workbench To Interact With The LLM
+## 2.0 Create and use a custom workbench with the deployed inference server
+Think of workbench as an application in a wall garden. 
 
-### 5.1 AnythingLLM
+### 2.1 AnythingLLM
 AnythingLLM is a full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
-#### 5.1.1 AnythingLLM in Red Hat Openshift AI
+#### 2.1.1 AnythingLLM in Red Hat Openshift AI
 To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications easily.
-  
-  >*Step 1 may already have been setup by your admin. If you are participating in a workshop, skip this and continue on to **step 2**.*
 
   1. We will add an image by providing the details of the hosted container registry. Navigate to ```https://quay.io/rh-aiservices-bu/anythingllm-workbench:1.8.5``` Copy the URL and paste it into Settings > Workbench Images > image location.
 
       ![Image](img/05/5.1.png)
 
 
-  1. Create a new workbench, pick the name of the workbench you have given in the previous step. If you are participating in a workshop and your admin have already set up for you, choose "AnythingLLM".
+  1. Create a new workbench, pick the name of the workbench you have given in the previous step. If you are participating in a workshop and you read this, quickly go **[here](/docs/readme-workshop.md)**. Your admin have already set this up for you, choose "AnythingLLM".
 
       ![Image](img/05/5.2.png)
 
@@ -259,7 +298,7 @@ To get started quickly, we will use a custom workbench - a feature offered by Re
 
       ![Image](img/05/5.3.png)
 
-### 5.2 Connecting AnythingLLM To Our Privately Hosted Model
+### 2.2 Connecting AnythingLLM To Our Privately Hosted Model
 AnythingLLM is able to consume inference endpoints from multiple AI provider. In this exercise, we will connect it to our privately hosted LLM inference endpoints set up in previous steps.
 
 1. Select OpenAI Compatible API
@@ -282,14 +321,14 @@ AnythingLLM is able to consume inference endpoints from multiple AI provider. In
 
     ![Image](img/05/5.6.png)
 
-### 5.3 Retrieval Augmented Generation with AnythingLLM 
+### 3.0 Retrieval Augmented Generation with AnythingLLM 
 RAG, or Retrieval-Augmented Generation, is an AI framework that combines the strengths of traditional information retrieval systems with generative large language models (LLMs). It allows LLMs to access and reference information outside their training data to provide more accurate, up-to-date, and relevant responses. Essentially, RAG enhances LLMs by enabling them to tap into external knowledge sources, like documents, databases, or even the internet, before generating text.
 
 For the purpose of demonstration, we will use a local vector database - LanceDB.
 
 LanceDB is deployed as part of AnythingLLM. You may explore the settings page of AnythingLLM to provide your own vector database.
 
-### 5.4 Scraping Website For RAG
+### 3.1 Scraping Website For RAG
 You may insert your own pdf, csv or any digestible format for RAG. In this guide, we will step up a notch to scrape website and use its data as RAG. We will use built-in scraper from AnythingLLM, after getting the data, it will chunk it and store in the vector database LanceDB for retrieval.
 
 1. We first ask a question and capture the default response. We'll see the LLM gave us a generic response.
@@ -321,12 +360,11 @@ You may insert your own pdf, csv or any digestible format for RAG. In this guide
 11. Behind the scenes, AnythingLLM scraped the website, chunked it and embedded it into the workspace.
     ![Image](img/05/5.7.5.png)
 
-## 6.0 Agentic AI & MCP Server
+## 4.0 Agentic AI & MCP Server
 
 Prerequisite: The following section requires you to use Terminal or CLI commands. We will deploy llama-stack, an open-sourced developer framework and library by Meta for building agentic AI. 
 
 1. Go to your OpenShift AI cluster and select the app icon to go to console. 
-
     ![Image](img/07/7.0.1.png)
 1. From the console, click the CLI icon and start a terminal session.
     ![Image](img/07/7.0.2.png)
@@ -335,9 +373,8 @@ Prerequisite: The following section requires you to use Terminal or CLI commands
     ```shell
     git clone https://github.com/cbtham/rhoai-genai-workshop.git && cd rhoai-genai-workshop
     ```
-1. Now, let's proceed on.
 
-### 6.1 Deploying Llama Stack and MCP Server
+### 4.1 Deploying Llama Stack and MCP Server
 Llama Stack is a developer framework for building generative AI applications — are set up and connected to create a production-ready environment across various environments like on-prem, air-gapped or the cloud.
 
 We will need a few components:-
@@ -402,7 +439,7 @@ Model Context Protocol, MCP is an open standard for AI agents and LLMs to connec
     oc get pods -n llama-stack-k8s-operator-controller-manager
     ```
 
-### 6.2 Giving your LLM the power to call tools and use MCP
+### 4.2 Giving your LLM the power to call tools and use MCP
 To do this, we will need to go back to OpenShift AI portal. We will need to modify the deployment.
 1. In your datascience project **Models** tab, select the LLM that you have deployed and choose edit. 
 1. Scroll down to vLLM arguments. We will need to enable a few flags to allow tool calling.
@@ -416,7 +453,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ![Image](img/07/7.0.7.png)
 1. When the LLM model finish re-deploy, we will be able to test.
 
-### 6.3 Test and interact with your LLM model with tool call capability
+### 4.3 Test and interact with your LLM model with tool call capability
 
 #### AnythingLLM
 
@@ -451,7 +488,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
 oc apply -f obs/experimental/openshift-mcp/cluster-read-serviceaccount.yaml
 ```
 
-#### OPTIONAL: Deploy Llama-stack Playground To Test MCP
+#### 4.4 OPTIONAL: Deploy Llama-stack Playground To Test MCP
 In any organization, you may have developers that would like to build and try on other tools, library or frameworks. The section below showcases llama-stack playground, which have a more robust debugging and logging interfaces. 
 
 To deploy llama-stack playground, follow on. The playground is a streamlit based UI to test the LLM model with options to enable capabilities on demand.
@@ -476,90 +513,78 @@ To deploy llama-stack playground, follow on. The playground is a streamlit based
     Ask *How many pods are there in llama-stack namespace?*
         ![Image](img/07/7.2.2.png)
 
-## 7.0 Setting up Observability Stack & Collecting Metrics
+## 5.0 Setting up Observability Stack & Collecting Metrics
 
 The following section requires you run code in a Terminal. You can run this directly on Red Hat Openshift console or run this through your local terminal connected to the openshift cluster. When you are ready, git clone this repository.
 
-```shell
-git clone https://github.com/cbtham/rhoai-genai-workshop.git
+### 5.1 Prometheus 
+Prometheus is used to aggregate logs. Prometheus is installed by default with OpenShift. However, the default monitoring stack only collects metrics related to core OpenShift platform components. Therefore we need to enable User Workload Monitoring in order to collect metrics from the model we have deployed. More about configuring Prometheus in documentation - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
+
+1. In order to enable monitoring for user-defined projects, we need to set `enableUserWorkload: true` in the cluster monitoring ConfigMap object. You can do this by applying the following yaml:
+
+    ```
+    oc apply -f obs/cluster-monitoring-config.yaml -n openshift-monitoring
+    ```
+
+#### 5.1.2 Add vLLM metrics to user-workload (uwl) metrics allowlist
+
+Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want Prometheus to gather. We can do this by adding `vllm:.*` to the `metrics_allowlist.yaml` in the project namespace. Before applying the yaml, make sure to **CHANGE** the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, deploy with the following command. </br>
+
 ```
-
-### 7.1 Prometheus 
-
-#### 7.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
-
-Prometheus is installed by default with OpenShift. However, the default monitoring stack only collects metrics related to core OpenShift platform components. Therefore we need to enable User Workload Monitoring in order to collect metrics from the model we have deployed. 
-
-In order to enable monitoring for user-defined projects, we need to set `enableUserWorkload: true` in the cluster monitoring ConfigMap object. You can do this by applying the following yaml:
-
-```
-oc apply -f obs/cluster-monitoring-config.yaml -n openshift-monitoring
-```
-
-#### 7.1.2 Add vLLM metrics to user-workload (uwl) metrics allowlist
-
-Now that we have enabled user-workload monitoring, we just need to add vLLM to the list of metrics we want Prometheus to gather. We can do this by adding `vllm:.*` to the `metrics_allowlist.yaml` in the project namespace. Before applying the yaml, make sure to **CHANGE** the value of namespace to the namespace that your model has been deployed in. Once you've changed the namespace value, deploy with the following command.
-
-```shell
-oc apply -f obs/metrics_allowlist.yaml
+    oc apply -f obs/metrics_allowlist.yaml
 ```
 > Note: If you face Error from server (NotFound): error when creating "obs/metrics_allowlist.yaml": namespaces "YOUR_PROJECT_NAMESPACE" not found, modify the metrics_allowlist.yaml to include reflect your project namespace.
 
-### 7.2 Grafana
+### 5.2 Grafana
 
-#### 7.2.1 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
+#### 5.2.1 [Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/) is use for dashboarding. It will be used to display key metrices from the logs collected.
 
-1. Create Grafana namespace
+1. Back at the command line terminal. Create a new Grafana namespace
 
-```
-oc create namespace grafana
-```
+    ```
+    oc create namespace grafana
+    ```
 
 2. Deploy grafana PVC, Service, and Deployment
 
-```
-oc apply -f obs/grafana-setup.yaml -n grafana
-```
+    ```
+    oc apply -f obs/grafana-setup.yaml -n grafana
+    ```
 
 3. Apply route to expose Grafana UI externally
 
-```
-oc apply -f obs/expose-grafana.yaml -n grafana
-```
+    ```
+    oc apply -f obs/expose-grafana.yaml -n grafana
+    ```
 
 4. Get the Grafana route URL:
 
-```
-oc get route grafana -n grafana -o jsonpath='https://{.spec.host}{"\n"}'
-```
+    ```
+    oc get route grafana -n grafana -o jsonpath='https://{.spec.host}{"\n"}'
+    ```
 
 
-#### 7.2.2 Adding Data Source to Grafana
+#### 5.2.2 Adding Data Source to Grafana
 
-1. Create Grafana Secret Token
+1. Create Grafana Secret Token. This is used so that Grafana can access the Prometheus Data Source.
 
-This is used so that Grafana can access the Prometheus Data Source.
+    ```
+    oc apply -f obs/grafana-prometheus-token.yaml -n grafana --namespace=openshift-monitoring
+    ```
 
+1. Get the token by running the following command:
 
-```
-oc apply -f obs/grafana-prometheus-token.yaml -n grafana --namespace=openshift-monitoring
-```
+    ```
+    oc get secret grafana-prometheus-token \
+    -n openshift-monitoring \
+    -o jsonpath='{.data.token}' | base64 -d && echo
+    ```
 
-Get the token by running the following command:
+1. Add Data Source in Grafana UI. Navigate to data sources -> add data source
 
-```
-oc get secret grafana-prometheus-token \
-  -n openshift-monitoring \
-  -o jsonpath='{.data.token}' | base64 -d && echo
-```
+    ![Image](img/06/5.1.png)
 
-2. Add Data Source in Grafana UI
-
-Navigate to data sources -> add data source
-
-![Image](img/06/5.1.png)
-
-![Image](img/06/5.2.png)
+    ![Image](img/06/5.2.png)
 
 Select Prometheus as the data source, then fill in the following values:
 - ***Prometheus Server URL***: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
@@ -576,32 +601,31 @@ Once the above is filled out, hit save and test at the bottom. You should then s
 
 ![Image](img/06/5.3.png)
 
-3. Verify vLLM and DCGM Metrics can be read from Data Source
+4. Verify vLLM and DCGM Metrics can be read from Data Source
 
-We want to make sure Grafana is actually getting the vLLM and DCGM metrics from the Data Source.
+    We want to make sure Grafana is actually getting the vLLM and DCGM metrics from the Data Source.
 
-Go to explore->metrics explorer and then for the metric value type vllm, verify that you can see the different vllm metrics. Then type DCGM, and verify you can see the different DCGM metrics.
+    Go to explore->metrics explorer and then for the metric value type vllm, verify that you can see the different vllm metrics. Then type DCGM, and verify you can see the different DCGM metrics.
 
-![Image](img/06/5.4.png)
+    ![Image](img/06/5.4.png)
 
-![Image](img/06/5.5.png)
+    ![Image](img/06/5.5.png)
 
 
-### 7.3 Importing vLLM Dashboard
+### 5.3 Importing vLLM Dashboard
 
 The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
 
-Go to Dashboards -> Create Dashboard
+1. Go to Dashboards -> Create Dashboard
 
-![Image](img/06/5.6.png)
+    ![Image](img/06/5.6.png)
 
-Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json)
+1. Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json)
 or just copy and paste the yaml into the box provided.
 
-![Image](img/06/5.7.png)
+    ![Image](img/06/5.7.png)
 
-Then hit load, then Import.
-
+1. Then hit load, then Import.
 
 #### Optional: vLLM Advanced Performance Dashboard
 This dashboard is meant to provide high level metrices - key to assist in setting SLO, monitoring and improving performance.
@@ -609,22 +633,21 @@ This dashboard is meant to provide high level metrices - key to assist in settin
 To add this, select Import a dashboard. Then copy and paste the content of [vLLM Advanced Performance Dashboard yaml](./obs/grafana-dashboard-llm-performance.json) to import.
 
 
-### 7.4 Importing DCGM Dashboard
+### 5.4 Importing Nvidia DCGM Dashboard for GPU
 
 The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/. 
 
-Go back to dashboards in Grafana UI and select new->import. Copy the following dashboard ID: `12239`. Paste that dashboard ID on Import Dashboard page. Then hit load.
+1. Go back to dashboards in Grafana UI and select new->import. Copy the following dashboard ID: `12239`. Paste that dashboard ID on Import Dashboard page. Then hit load.
 
-![Image](img/06/5.8.png)
+    ![Image](img/06/5.8.png)
 
-Select prometheus data source then select Import.
+1. Select prometheus data source then select Import.
 
-![Image](img/06/5.9.png)
+    ![Image](img/06/5.9.png)
 
-Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
+1. Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
 
-![Image](img/06/5.10.png)
-
+    ![Image](img/06/5.10.png)
 
 ## Knowledge Base
 
