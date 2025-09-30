@@ -22,16 +22,16 @@ An OpenShift cluster that have OpenShift AI with Nvidia GPU.
 
 The purpose for this guide is to offer the simplest steps for deploying a **privately hosted AI model** on Red Hat Openshift AI. This guide will be covering deploying a Red Hat certified ***Qwen3 Model*** using the ***vLLM ServingRuntime for KServe*** on ***NVIDIA GPU***. In addition to deploying the model, we will showcase a simple observability stack so that you can collect and visualize metrics related to AI model performance and GPU information.
 
-## 3. Deploying Model on Red Hat OpenShift AI
+## 1. Deploying Model on Red Hat OpenShift AI
 
-### 3.1 Create a workspace
+### 1.1 Create a workspace
 Login to your environment. If you're in a workshop, [follow the link to the portal from your host](). 
 
 1. Go to Data Science Projects and create a project. This will be your workspace where you manage workbenches, models, pipelines, storage connections.
 
     ![Image](../img/04/4.0.png)
 
-### Use a pre-built LLM container
+### 1.2 Use a pre-built LLM container
 Using a pre-built modelcar container with LLM makes deployment faster. This is the easiest way to get a LLM model running on Red Hat OpenShift AI. Since the model is pre-packaged, it does not need to download from HuggingFace, you can deploy this in an air-gapped environment!
 
 1. Navigate to https://quay.io/repository/redhat-ai-services/modelcar-catalog and explore the available models.
@@ -54,7 +54,7 @@ Using a pre-built modelcar container with LLM makes deployment faster. This is t
 1. Remember to check the box to secure the LLM model endpoint that you are about to deploy.
 ![Image](../img/03/3.1.1-2.png)
 1. Select connection type *URI - v1* and give it a name. A good practice is to name it the model you are about to deploy.
-1. Next, append the URI with oci://
+1. Next, append the URI with **oci://**
 ![Image](../img/03/3.1.2.png)
 
     ```
@@ -62,6 +62,7 @@ Using a pre-built modelcar container with LLM makes deployment faster. This is t
     ```
 
     >Note: If you face resource problems, try select a smaller model. For example qwen2.5-0.5b
+    </br>
         ```
         oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2.5-0.5b-instruct
         ```
@@ -81,7 +82,7 @@ Using a pre-built modelcar container with LLM makes deployment faster. This is t
     ![Image](../img/03/3.1.4.png)
 12. In production deployment, you might want to adjust the vllm parameter args to fit your use case, for example increase context length or apply certain quantization. Every use case is different and there is no silver bullet for a config that fits all. 
 
-### 4. Query Model Inference Endpoint
+### 1.3. Query Model Inference Endpoint
 
 Once your model pod is in a running state, you can try querying it in order to test if the endpoint is reachable and the model is returning correctly. The status will have a green tick.
 
@@ -94,6 +95,8 @@ Once your model pod is in a running state, you can try querying it in order to t
     ![Image](../img/04/4.9.png)
 
 3. Now that you have the URL and Authorization Token, you can try querying the model endpoint. We will try multiple queries.
+
+**You may skip this part if you are not familiar with Terminal or CLI.** Jump ahead to next section, 2.0
 
 #### /v1/models
 Let's start with the simplest query, the /v1/models endpoint. This endpoint just returns information about the models being served, we can use it to simply see if the model can accept a request and return with some information. Open up a command window or terminal of your chosing on your computer:
@@ -133,13 +136,13 @@ You can change the ***temperature*** of the query. The temperature essentially c
 
 **Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.**
 
-## 5. Deploy A Workbench To Interact With The LLM
+## 2. Deploy A Workbench To Interact With The LLM
 Workbench is a containerized, development environment for data scientists, AI engineers to build, train, test and iterate within the OpenShift AI platform.
 
-### 5.1 AnythingLLM
+### 2.1 AnythingLLM
 AnythingLLM is a full-stack workbench that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
-#### 5.1.1 AnythingLLM in Red Hat Openshift AI
+#### 2.1.1 AnythingLLM in Red Hat Openshift AI
 To get started quickly, we will use a custom workbench - a feature offered by Red Hat Openshift AI to quickly host compatible containerized applications as workbench easily. In your organization, you can BYO workbench as well!
   
   1. Create a new workbench, pick the name of the workbench you have given in the previous step. If you are participating in a workshop and your admin have already set up for you, choose "AnythingLLM".
@@ -159,7 +162,7 @@ To get started quickly, we will use a custom workbench - a feature offered by Re
       ![Image](../img/05/5.3.png)
   1. Click on the Anythingllm hyperlink to go to the workbench application that you have just deployed! 
 
-### 5.2 Connecting AnythingLLM To Our Privately Hosted Model
+### 2.2 Connecting AnythingLLM To Our Privately Hosted Model
 AnythingLLM is able to consume inference endpoints from multiple AI provider. In this exercise, we will configure it to connect to our privately hosted LLM inference endpoints set up in previous steps.
 
 1. Select OpenAI Compatible API
@@ -196,14 +199,14 @@ AnythingLLM is able to consume inference endpoints from multiple AI provider. In
 
     In production there are more to it. Things like managing the LLM endpoint lifecycle, logs, versioning, automating CICD deployment and even giving a guardrail are extremely important. Red Hat Openshift AI is your one stop platform to implement all these.
 
-### 5.3 Retrieval Augmented Generation with AnythingLLM 
+### 3. Retrieval Augmented Generation with AnythingLLM 
 RAG, or Retrieval-Augmented Generation, is an AI framework that combines the strengths of traditional information retrieval systems with generative large language models (LLMs). It allows LLMs to access and reference information outside their training data to provide more accurate, up-to-date, and relevant responses. Essentially, RAG enhances LLMs by enabling them to tap into external knowledge sources, like documents, databases, or even the internet, before generating text.
 
 For the purpose of demonstration, we will use a local vector database - LanceDB.
 
 LanceDB is deployed as part of AnythingLLM. You may explore the settings page of AnythingLLM to provide your own vector database.
 
-### 5.4 Scraping Website For RAG
+### 3.1 Scraping Website For RAG
 You may insert your own pdf, csv or any digestible format for RAG. In this guide, we will step up a notch to scrape website and use its data as RAG. We will use built-in scraper from AnythingLLM, after getting the data, it will chunk it and store in the vector database LanceDB for retrieval.
 
 1. We first ask a question and capture the default response. We'll see the LLM gave us a generic response.
@@ -247,7 +250,7 @@ and you can see the answer is much more detailed and with reference to the scrap
     ![Image](../img/05/5.7.8.png) </br>
     ![Image](../img/05/5.7.9.png)
 
-## 6.0 Agentic AI & MCP Server
+## 4.0 Agentic AI & MCP Server
 
 Prerequisite: The following section requires you to use Terminal or CLI commands. We will deploy llama-stack, an open-sourced developer framework and library by Meta for building agentic AI. 
 
@@ -263,7 +266,7 @@ Prerequisite: The following section requires you to use Terminal or CLI commands
     ```
 1. Now, let's proceed on.
 
-### 6.1 Deploying Llama Stack and MCP Server
+### 4.1 Deploying Llama Stack and MCP Server
 Llama Stack is a developer framework for building generative AI applications — are set up and connected to create a production-ready environment across various environments like on-prem, air-gapped or the cloud.
 
 We will need a few components:-
@@ -326,7 +329,7 @@ Model Context Protocol, MCP is an open standard for AI agents and LLMs to connec
     perl -pe 's/\$\{([^}]+)\}/$ENV{$1}/g' obs/experimental/anythingllm-mcp-config/anythingllm_mcp_servers.json > /tmp/anythingllm_mcp_servers.json && oc cp /tmp/anythingllm_mcp_servers.json anythingllm-0:/app/server/storage/plugins/anythingllm_mcp_servers.json -c anythingllm
     ```
 
-### 6.2 Giving your LLM the power to call tools and use MCP
+### 4.2 Giving your LLM the power to call tools and use MCP
 To do this, we will need to go back to OpenShift AI portal. We will need to modify the deployment.
 1. In your datascience project **Models** tab, select the LLM that you have deployed and choose edit. 
     ![Image](../img/07/7.1.png)
@@ -341,7 +344,7 @@ To do this, we will need to go back to OpenShift AI portal. We will need to modi
     ![Image](../img/07/7.0.7.png)
 1. When the LLM model finish re-deploy, we will be able to test.
 
-### 6.3 Test and interact with your LLM model with tool call capability
+### 4.3 Test and interact with your LLM model with tool call capability
 
 #### AnythingLLM
 
@@ -403,7 +406,7 @@ To deploy llama-stack playground, follow on. The playground is a streamlit based
     Ask *How many pods are there in YOUR-PROJECT-NAMESPACE namespace?*
         ![Image](../img/07/7.2.2.png)
 
-## 7.0. Setting up Observability Stack & Collecting Metrics
+## 5.0. Setting up Observability Stack & Collecting Metrics
 
 The following section requires you run code in a Terminal. You can run this directly on Red Hat Openshift console or run this through your local terminal connected to the openshift cluster. 
 
@@ -413,19 +416,17 @@ In your terminal or Openshift CLI, run this
 git clone https://github.com/cbtham/rhoai-genai-workshop.git && cd rhoai-genai-workshop
 ```
 
-### 7.1 Prometheus 
+### 5.1 Prometheus 
 
-#### 7.1.1 Configuring Prometheus - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
+Prometheus is used to aggregate logs. Prometheus is installed by default with OpenShift. However, the default monitoring stack only collects metrics related to core OpenShift platform components. Therefore we need to enable User Workload Monitoring in order to collect metrics from the model we have deployed. More about configuring Prometheus in documentation - [Enable monitoring for user-defined projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/monitoring/enabling-monitoring-for-user-defined-projects#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects) 
 
-Prometheus is installed by default with OpenShift. However, the default monitoring stack is ONLY ACCESSIBLE to administrator or users that have given permission. Prometheus collects metrics related to core OpenShift platform components. 
+Your administrator, in this case the workshop facilitator has already enabled monitoring and shared the token with you via RBAC. By default, you will not have access to the cluster metrics.
 
-Your administrator, in this case the workshop facilitator has already enabled monitoring and will be providing you with a token for you to consume the metrics.
+### 5.2 Grafana
 
-### 7.2 Grafana
+#### 5.2.1 [Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/) is use for dashboarding. It will be used to display key metrices from the logs collected.
 
-#### 7.2.1 [Install & Setup Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
-
-1. Deploy grafana PVC, Service, and Deployment
+1. Deploy grafana, service, and route.
 > Be sure to use your project name.
 ```
 oc apply -f obs/grafana-user-setup.yaml -n YOUR_PROJECT_NAME
@@ -442,11 +443,11 @@ oc get pods -n YOUR_PROJECT_NAME
 ```
 
 
-#### 7.2.2 Adding Data Source to Grafana
+#### 5.2.2 Adding Data Source to Grafana
 
-1. Get Grafana Secret Token
+1. Get the Secret Token
 
-    This is used so that Grafana can access the Prometheus Data Source.
+    This is the part where the workshop admin have enabled RBAC and shared the token with you so you can use it to set up Grafana, accessing the logs.
 
     ```
     export PROMETHEUS_TOKEN=$(oc get secret prometheus-token \
@@ -471,8 +472,8 @@ oc get pods -n YOUR_PROJECT_NAME
     ```
     echo "Bearer $PROMETHEUS_TOKEN"
     ```
-    </br>
     Copy starting from Bearer
+    </br>
 
     ![Image](../img/06/5.2-10.png)
     </br></br></br>
@@ -483,7 +484,7 @@ oc get pods -n YOUR_PROJECT_NAME
 
     ![Image](../img/06/5.3.png)
 
-### 7.3 Importing vLLM Dashboard
+### 5.3 Importing vLLM Dashboard
 
 The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
 
@@ -503,7 +504,7 @@ This dashboard is meant to provide high level metrices - key to assist in settin
 To add this, select Import a dashboard. Then copy and paste the content of [vLLM Advanced Performance Dashboard yaml](../obs/grafana-dashboard-llm-performance.json) to import.
 
 
-### 7.4 Importing DCGM Dashboard
+### 5.4 Importing Nvidia DCGM Dashboard for GPU
 
 The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/. 
 
