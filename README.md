@@ -187,36 +187,36 @@ git clone https://cbtham:<token>@huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a1
     - Endpoint: **API** endpoint of the minio deployment **[YOUR_OWN_MINIO_API_URL_GET_FROM_ROUTES]**
     - Bucket: name of the minio bucket you created **[models]**
 
-  ![Image](img/04/4.2.png)
+    ![Image](img/04/4.2.png)
 
-1. Next deploy your model. Go to the Models tab within your Data Science Project and select single-model serving:
+5. Next deploy your model. Go to the Models tab within your Data Science Project and select single-model serving:
 
 <!-- ***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step*** -->
 
   ![Image](img/04/4.3.png)
 
-After selecting single-models serving, select Deploy Model
+6. After selecting single-models serving, select Deploy Model
 
-  ![Image](img/04/4.4.png)
+    ![Image](img/04/4.4.png)
 
-2. Fill in the following values:
-- ***Model deployment name***: Name of the deployed model
-- ***Serving runtime***: vLLM NVIDIA GPU ServingRuntime for KServe
-- ***Model server size***: Select small. Adjust as you need.
-- ***Accelerator***: Select NVIDIA GPU
-- ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
-- ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name
-- ***Source model location***: Select the data connection that you set up in step 4.1. Then provide it the path to your model. If you're following this guide, the path will be qwen3-4b-quantizedw4a16. If you're unsure of the path you can go to the minio-ui, navigate to the models bucket you created, and see the name of the directory where the model is stored.
+7. Fill in the following values:
+    - ***Model deployment name***: Name of the deployed model
+    - ***Serving runtime***: vLLM NVIDIA GPU ServingRuntime for KServe
+    - ***Model server size***: Select small. Adjust as you need.
+    - ***Accelerator***: Select NVIDIA GPU
+    - ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
+    - ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name
+    - ***Source model location***: Select the data connection that you set up in step 4.1. Then provide it the path to your model. If you're following this guide, the path will be qwen3-4b-quantizedw4a16. If you're unsure of the path you can go to the minio-ui, navigate to the models bucket you created, and see the name of the directory where the model is stored.
 
-  ![Image](img/04/4.5.png)
+    ![Image](img/04/4.5.png)
 
-  ![Image](img/04/4.6.png)
+    ![Image](img/04/4.6.png)
 
-3. Once that is done, you are all set to hit Deploy! </br>
-1. It will take some time for the model to be deployed.
-1. When you see the green tick, you are done.
+8. Once that is done, you are all set to hit Deploy! </br>
+9. It will take some time for the model to be deployed.
+10. When you see the green tick, you are done.
     ![Image](/img/03/3.1.4.png)
-1. Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
+11. Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.
 
 <!-- ### 4.3 Query Model Inference Endpoint
 
