@@ -195,7 +195,7 @@ git clone https://cbtham:<token>@huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a1
 
   ![Image](img/04/4.3.png)
 
-6. After selecting single-models serving, select Deploy Model
+6. After selecting single-models serving, select Deploy Model. Deployment mode using: RawDeployment 
 
     ![Image](img/04/4.4.png)
 
@@ -204,6 +204,7 @@ git clone https://cbtham:<token>@huggingface.co/RedHatAI/Qwen3-4B-quantized.w4a1
     - ***Serving runtime***: vLLM NVIDIA GPU ServingRuntime for KServe
     - ***Model server size***: Select small. Adjust as you need.
     - ***Accelerator***: Select NVIDIA GPU
+    - ***Deployment Mode***: Select RawDeployment 
     - ***Model route***: Select check box for "Make deployed models available through an external route" this will enable us to send requests to the model endpoint from outside the cluster
     - ***Token authentication***: Select check box for "Require token authentication" this makes it so that sending requests to the model endpoint requires a token, which is important for security. You can leave the service account name as default-name
     - ***Source model location***: Select the data connection that you set up in step 4.1. Then provide it the path to your model. If you're following this guide, the path will be qwen3-4b-quantizedw4a16. If you're unsure of the path you can go to the minio-ui, navigate to the models bucket you created, and see the name of the directory where the model is stored.

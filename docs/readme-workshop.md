@@ -49,8 +49,8 @@ Using a pre-built modelcar container with LLM makes deployment faster. This is t
 
 <!-- ***Note that once you select single or multi model serving, you are unable to change it without going into the openshift console and changing the value of the `modelmesh-enabled` tag on the namespace, true means multi model serving is enabled, false means single model serving is enabled. You can remove the tag entirely from the namespace if you want the option to select between the UI like you were able to in this step*** -->
   
-6. Fill in a name, ensure to choose nvidia gpu serving runtime and deployment mode to **Standard**.
-![Image](../img/03/3.1.1.png)
+6. Fill in a name, ensure to choose nvidia gpu serving runtime and deployment mode to **RawDeployment**.
+![Image](../img/03/raw_deployment_image.png)
 1. Remember to check the box to secure the LLM model endpoint that you are about to deploy.
 ![Image](../img/03/3.1.1-2.png)
 1. Select connection type *URI - v1* and give it a name. A good practice is to name it the model you are about to deploy.
