@@ -93,9 +93,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.50, rate(vllm:time_to_first_token_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.50, sum by (le, model_name) (rate(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P50 TTFT",
+          "legendFormat": "P50 {{model_name}}",
           "refId": "A"
         },
         {
@@ -103,9 +103,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, rate(vllm:time_to_first_token_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.95, sum by (le, model_name) (rate(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P95 TTFT",
+          "legendFormat": "P95 {{model_name}}",
           "refId": "B"
         },
         {
@@ -113,9 +113,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.99, rate(vllm:time_to_first_token_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.99, sum by (le, model_name) (rate(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P99 TTFT",
+          "legendFormat": "P99 {{model_name}}",
           "refId": "C"
         }
       ],
@@ -193,9 +193,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.50, rate(vllm:time_per_output_token_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.50, sum by (le, model_name) (rate(vllm:inter_token_latency_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P50 Inter-Token",
+          "legendFormat": "P50 {{model_name}}",
           "refId": "A"
         },
         {
@@ -203,9 +203,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, rate(vllm:time_per_output_token_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.95, sum by (le, model_name) (rate(vllm:inter_token_latency_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P95 Inter-Token",
+          "legendFormat": "P95 {{model_name}}",
           "refId": "B"
         }
       ],
@@ -217,14 +217,14 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "**Active GPU Memory Blocks** shows the number of GPU memory blocks currently allocated by vLLM for KV cache and model weights. Higher values indicate more memory usage and concurrent request capacity.\n\n• **Green (1K-40K)**: Light usage\n• **Yellow (40K-60K)**: Moderate usage\n• **Red (60K+)**: High usage, approaching capacity",
+      "description": "**GPU Cache Usage** shows the percentage of GPU KV cache currently in use by vLLM. Higher values indicate more memory usage for concurrent requests.\n\n• **Green (0-40%)**: Light usage\n• **Yellow (40-60%)**: Moderate usage\n• **Red (60%+)**: High usage, approaching capacity",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 70000,
+          "max": 100,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -235,15 +235,15 @@
               },
               {
                 "color": "yellow",
-                "value": 40000
+                "value": 40
               },
               {
                 "color": "red",
-                "value": 60000
+                "value": 60
               }
             ]
           },
-          "unit": "short"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -270,13 +270,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "65592",
+          "expr": "avg(vllm:kv_cache_usage_perc{model_name=~\"$model\"}) * 100",
           "interval": "",
-          "legendFormat": "GPU Memory Blocks",
+          "legendFormat": "GPU Cache Usage %",
           "refId": "A"
         }
       ],
-      "title": "GPU Memory Blocks",
+      "title": "GPU Cache Usage",
       "type": "gauge"
     },
     {
@@ -337,7 +337,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(vllm:gpu_prefix_cache_hits_total) / sum(vllm:gpu_prefix_cache_queries_total)",
+          "expr": "sum(vllm:prefix_cache_hits_total{model_name=~\"$model\"}) / sum(vllm:prefix_cache_queries_total{model_name=~\"$model\"})",
           "interval": "",
           "legendFormat": "Overall Cache Hit Rate",
           "refId": "A"
@@ -404,7 +404,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "vllm:gpu_prefix_cache_hits_total / vllm:gpu_prefix_cache_queries_total",
+          "expr": "vllm:prefix_cache_hits_total{model_name=~\"$model\"} / vllm:prefix_cache_queries_total{model_name=~\"$model\"}",
           "interval": "",
           "legendFormat": "Pod {{instance}}",
           "refId": "A"
@@ -496,9 +496,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "vllm:num_requests_running",
+          "expr": "sum by (model_name) (vllm:num_requests_running{model_name=~\"$model\"})",
           "interval": "",
-          "legendFormat": "Requests Running",
+          "legendFormat": "Running - {{model_name}}",
           "refId": "A"
         },
         {
@@ -506,9 +506,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "vllm:num_requests_waiting",
+          "expr": "sum by (model_name) (vllm:num_requests_waiting{model_name=~\"$model\"})",
           "interval": "",
-          "legendFormat": "Requests Waiting",
+          "legendFormat": "Waiting - {{model_name}}",
           "refId": "B"
         }
       ],
@@ -578,9 +578,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(vllm:request_success_total[5m])",
+          "expr": "sum by (model_name) (rate(vllm:request_success_total{model_name=~\"$model\"}[5m]))",
           "interval": "",
-          "legendFormat": "Success Rate",
+          "legendFormat": "Success - {{model_name}}",
           "refId": "A"
         },
         {
@@ -588,9 +588,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(vllm:e2e_request_latency_seconds_count[5m])",
+          "expr": "sum by (model_name) (rate(vllm:e2e_request_latency_seconds_count{model_name=~\"$model\"}[5m]))",
           "interval": "",
-          "legendFormat": "Total Rate",
+          "legendFormat": "Total - {{model_name}}",
           "refId": "B"
         }
       ],
@@ -660,9 +660,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(vllm:prompt_tokens_total[5m])",
+          "expr": "sum by (model_name) (rate(vllm:prompt_tokens_total{model_name=~\"$model\"}[5m]))",
           "interval": "",
-          "legendFormat": "Prompt Tokens/sec",
+          "legendFormat": "Prompt - {{model_name}}",
           "refId": "A"
         },
         {
@@ -670,9 +670,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(vllm:generation_tokens_total[5m])",
+          "expr": "sum by (model_name) (rate(vllm:generation_tokens_total{model_name=~\"$model\"}[5m]))",
           "interval": "",
-          "legendFormat": "Generated Tokens/sec",
+          "legendFormat": "Generated - {{model_name}}",
           "refId": "B"
         }
       ],
@@ -750,9 +750,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.50, rate(vllm:e2e_request_latency_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.50, sum by (le, model_name) (rate(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P50 E2E",
+          "legendFormat": "P50 {{model_name}}",
           "refId": "A"
         },
         {
@@ -760,9 +760,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, rate(vllm:e2e_request_latency_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.95, sum by (le, model_name) (rate(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P95 E2E",
+          "legendFormat": "P95 {{model_name}}",
           "refId": "B"
         },
         {
@@ -770,9 +770,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.99, rate(vllm:e2e_request_latency_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.99, sum by (le, model_name) (rate(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model\"}[5m])))",
           "interval": "",
-          "legendFormat": "P99 E2E",
+          "legendFormat": "P99 {{model_name}}",
           "refId": "C"
         },
         {
@@ -780,9 +780,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "vllm:e2e_request_latency_seconds_sum / vllm:e2e_request_latency_seconds_count",
+          "expr": "sum by (model_name) (vllm:e2e_request_latency_seconds_sum{model_name=~\"$model\"}) / sum by (model_name) (vllm:e2e_request_latency_seconds_count{model_name=~\"$model\"})",
           "interval": "",
-          "legendFormat": "Average E2E",
+          "legendFormat": "Avg {{model_name}}",
           "refId": "D"
         }
       ],
@@ -803,9 +803,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "meta-llama/Llama-3.2-1B",
-          "value": "meta-llama/Llama-3.2-1B"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
@@ -813,18 +813,19 @@
         },
         "definition": "label_values(vllm:num_requests_running, model_name)",
         "hide": 0,
-        "includeAll": false,
-        "multi": false,
+        "includeAll": true,
+        "label": "Model",
+        "multi": true,
         "name": "model",
         "options": [],
         "query": {
           "query": "label_values(vllm:num_requests_running, model_name)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       }
     ]
