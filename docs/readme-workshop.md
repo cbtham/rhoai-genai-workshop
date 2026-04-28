@@ -96,7 +96,8 @@ Once your model pod is in a running state, you can try querying it in order to t
 
 3. Now that you have the URL and Authorization Token, you can try querying the model endpoint. We will try multiple queries.
 
-**You may skip this part if you are not familiar with Terminal or CLI.** Jump ahead to next section, 2.0
+<details>
+<summary><b>Optional: Query the model via Terminal/CLI (click to expand)</b></summary>
 
 #### /v1/models
 Let's start with the simplest query, the /v1/models endpoint. This endpoint just returns information about the models being served, we can use it to simply see if the model can accept a request and return with some information. Open up a command window or terminal of your chosing on your computer:
@@ -133,6 +134,8 @@ Running this command should return an output similar to the following:
 You can see within "text" the completed response "Red Hat is a... a company that provides software and services."
 
 You can change the ***temperature*** of the query. The temperature essentially controls the "randomness" of the model's response. The lower the temperature the more deterministic the response, the higher the temperature the more random/unpredictable the response. So if you set the temperature to 0, it would always return the same output since there would be no randomness. 
+
+</details>
 
 **Congratulations! You have now successfully deployed a LLM model on Red Hat Openshift AI using the vLLM ServingRuntime for KServe.**
 
