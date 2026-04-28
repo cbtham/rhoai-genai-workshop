@@ -493,17 +493,17 @@ oc get pods -n YOUR_PROJECT_NAME
 
 ### 5.3 Importing vLLM Dashboard
 
-The vLLM dashboard that is used by Emerging Tech and Red Hat Research can be found here: https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json. This dashboard is based on the upstream vLLM dashboard. 
+The vLLM dashboard is based on the upstream vLLM dashboard from Red Hat Emerging Tech. It gives you an insight to key metrics of your deployed LLM/s. 
 
-Go to Dashboards -> Create Dashboard
+1. Go to Dashboards -> Create Dashboard
 
-![Image](../img/06/5.6.png)
+    ![Image](../img/06/5.6.png)
 
-Select Import a dashboard. Then either upload the [vLLM dashboard yaml](https://github.com/redhat-et/ai-observability/blob/main/vllm-dashboards/vllm-grafana-openshift.json) or just copy and paste the yaml into the box provided.
+1. Select Import a dashboard. Then upload [grafana-dashboard-vllm-openshift-upstream.json](../obs/grafana-dashboard-vllm-openshift-upstream.json) or copy and paste the JSON content into the box provided.
 
-![Image](../img/06/5.7.png)
+    ![Image](../img/06/5.7.png)
 
-Then hit load, then Import.
+1. Then hit load, then Import.
 
 ### Optional: vLLM Advanced Performance Dashboard
 This dashboard is meant to provide high level metrices - key to assist in setting SLO, monitoring and improving performance.
@@ -513,19 +513,13 @@ To add this, select Import a dashboard. Then copy and paste the content of [vLLM
 
 ### 5.4 Importing Nvidia DCGM Dashboard for GPU
 
-The DCGM Grafana Dashboard can be found here: https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/. 
+The NVIDIA DCGM Exporter Dashboard is useful for GPU monitoring, showing metrics like GPU temperature, power usage, utilization, and memory.
 
-Go back to dashboards in Grafana UI and select new->import. Copy the following dashboard ID: `12239`. Paste that dashboard ID on Import Dashboard page. Then hit load.
+1. Go back to dashboards in Grafana UI and select new->import. Upload [grafana-dashboard-nvidia-dcgm.json](../obs/grafana-dashboard-nvidia-dcgm.json) or copy and paste the JSON content into the box provided.
 
-![Image](../img/06/5.8.png)
+1. Select prometheus data source then select Import.
 
-Select prometheus data source then select Import.
-
-![Image](../img/06/5.9.png)
-
-Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard, useful for GPU Monitoring.
-
-![Image](../img/06/5.10.png)
+1. Now you should have successfully imported the NVIDIA DCGM Exporter Dashboard.
 
 
 ## Knowledge Base
